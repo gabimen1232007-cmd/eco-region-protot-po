@@ -1,0 +1,2680 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoRegión · Aprovechamiento Forestal</title>
+<meta name="description" content="EcoRegión — Plataforma para gestionar el trámite de aprovechamiento forestal de ECO REGIÓN SAS BIC.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%232E4630%22/><path d=%22M12 4c3 3 5 6 5 9a5 5 0 0 1-10 0c0-3 2-6 5-9z%22 fill=%22%2399E567%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =========================================================================
+   EcoRegión · Design tokens
+   ========================================================================= */
+:root{
+  /* Identidad de marca (exactos, no modificar) */
+  --verde-oscuro:  #2E4630;
+  --verde-brillante:#50B50F;
+  --verde-claro:   #99E567;
+  --blanco:        #FFFFFF;
+
+  /* Derivados neutrales (solo para jerarquía tipográfica, no son "marca") */
+  --tinta:         #1D2B1E;   /* texto principal, mezcla de verde oscuro + negro */
+  --tinta-suave:   #4C5B4D;   /* texto secundario */
+  --linea:         #E1E9DE;   /* bordes suaves */
+  --panel:         #F5F9F2;   /* fondo de superficie sutil */
+  --panel-2:       #ECF4E6;
+
+  /* Estados */
+  --alerta: #B5540F;
+  --alerta-bg: #FBEFE6;
+
+  /* Tipografía */
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* Radios y sombras */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(46,70,48,0.08);
+  --shadow-md: 0 8px 24px rgba(46,70,48,0.10);
+  --shadow-lg: 0 20px 48px rgba(46,70,48,0.16);
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body{
+  margin:0;
+  font-family: var(--font-body);
+  color: var(--tinta);
+  background: var(--blanco);
+  -webkit-font-smoothing: antialiased;
+}
+h1,h2,h3,h4{
+  font-family: var(--font-display);
+  color: var(--verde-oscuro);
+  line-height: 1.12;
+  margin: 0 0 .5em;
+  letter-spacing: -0.01em;
+}
+h1{ font-size: clamp(2.1rem, 1.4rem + 2.6vw, 3.4rem); font-weight: 600; }
+h2{ font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem); font-weight: 600; }
+h3{ font-size: 1.25rem; font-weight: 600; }
+p{ margin: 0 0 1em; color: var(--tinta-suave); line-height: 1.65; }
+a{ color: inherit; }
+button{ font-family: inherit; }
+:focus-visible{ outline: 3px solid var(--verde-claro); outline-offset: 2px; border-radius: 6px; }
+.container{ max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--verde-brillante); font-weight: 600; margin-bottom: 14px;
+}
+.eyebrow::before{ content:""; width:7px; height:7px; border-radius:50%; background: var(--verde-brillante); }
+
+/* =========================================================================
+   Botones
+   ========================================================================= */
+.btn{
+  appearance:none; border:none; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family: var(--font-body); font-weight: 700; font-size: .95rem;
+  padding: 14px 26px; border-radius: var(--r-pill);
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease), opacity .18s;
+  white-space: nowrap;
+}
+.btn svg{ width:18px; height:18px; flex-shrink:0; }
+.btn:active{ transform: translateY(1px) scale(.99); }
+.btn-primary{ background: var(--verde-brillante); color: var(--blanco); box-shadow: var(--shadow-sm); }
+.btn-primary:hover{ background:#469f0d; box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.btn-dark{ background: var(--verde-oscuro); color: var(--blanco); }
+.btn-dark:hover{ background:#233524; transform: translateY(-1px); }
+.btn-ghost{ background: transparent; color: var(--verde-oscuro); border: 1.5px solid var(--linea); }
+.btn-ghost:hover{ border-color: var(--verde-brillante); color: var(--verde-brillante); }
+.btn-text{ background:none; color: var(--verde-oscuro); padding: 10px 6px; text-decoration: underline; text-decoration-color: var(--verde-claro); text-underline-offset: 4px; }
+.btn:disabled{ opacity:.45; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
+.btn-sm{ padding: 9px 16px; font-size: .82rem; }
+.btn-block{ width:100%; }
+
+/* =========================================================================
+   Navegación
+   ========================================================================= */
+.navbar{
+  position: sticky; top:0; z-index: 40;
+  background: rgba(255,255,255,.86); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--linea);
+}
+.navbar .container{ display:flex; align-items:center; justify-content:space-between; height:72px; }
+.brand{ display:flex; align-items:center; gap:10px; font-family: var(--font-display); font-weight:700; font-size:1.25rem; color: var(--verde-oscuro); cursor:pointer; background:none; border:none; padding:0; }
+.brand .brand-mark{ width:34px; height:34px; display:grid; place-items:center; background: var(--verde-oscuro); border-radius: 10px; color: var(--verde-claro); }
+.brand .brand-mark svg{ width:19px; height:19px; }
+.nav-links{ display:flex; align-items:center; gap:28px; list-style:none; margin:0; padding:0; }
+.nav-links a{ text-decoration:none; color: var(--tinta-suave); font-weight:600; font-size:.92rem; cursor:pointer; }
+.nav-links a:hover{ color: var(--verde-brillante); }
+.nav-cta{ display:flex; align-items:center; gap:12px; }
+.nav-toggle{ display:none; background:none; border:none; cursor:pointer; color: var(--verde-oscuro); }
+.nav-links-mobile{ display:none; list-style:none; margin:0; padding: 0 24px 18px; flex-direction:column; gap:4px; }
+.nav-links-mobile.open{ display:flex; }
+.nav-links-mobile a{ display:block; padding:12px 4px; text-decoration:none; color: var(--tinta); font-weight:600; border-bottom:1px solid var(--linea); cursor:pointer; }
+
+/* =========================================================================
+   Hero (signature: líneas topográficas)
+   ========================================================================= */
+.hero{
+  position:relative; overflow:hidden;
+  background: linear-gradient(180deg, var(--panel) 0%, var(--blanco) 78%);
+  padding: 72px 0 56px;
+}
+.topo{
+  position:absolute; inset:0; z-index:0; opacity:.55; pointer-events:none;
+}
+.topo svg{ width:100%; height:100%; }
+.topo path{ animation: topo-drift 22s ease-in-out infinite; }
+.topo path:nth-child(2n){ animation-duration: 26s; animation-delay: -4s; }
+.topo path:nth-child(3n){ animation-duration: 30s; animation-delay: -9s; }
+@keyframes topo-drift{
+  0%,100%{ transform: translateY(0px); }
+  50%{ transform: translateY(-6px); }
+}
+.hero-grid{ position:relative; z-index:1; display:grid; grid-template-columns: 1.15fr .85fr; gap:48px; align-items:center; }
+.hero-copy .lead{ font-size:1.12rem; max-width: 46ch; }
+.hero-actions{ display:flex; align-items:center; gap:14px; margin-top:28px; flex-wrap:wrap; }
+.hero-stats{ display:flex; gap:28px; margin-top:40px; flex-wrap:wrap; }
+.hero-stat b{ display:block; font-family: var(--font-display); font-size:1.7rem; color: var(--verde-oscuro); }
+.hero-stat span{ font-size:.8rem; color: var(--tinta-suave); }
+.hero-card{
+  background: var(--verde-oscuro); border-radius: var(--r-lg); padding: 28px;
+  color: var(--blanco); box-shadow: var(--shadow-lg); position:relative; overflow:hidden;
+}
+.hero-card::after{ content:""; position:absolute; right:-40px; bottom:-40px; width:160px; height:160px; border-radius:50%; background: radial-gradient(circle, rgba(153,229,103,.28), transparent 70%); }
+.hero-card h3{ color: var(--verde-claro); font-family: var(--font-body); font-size:.82rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:18px; }
+.hero-card-row{ display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.12); }
+.hero-card-row:last-child{ border-bottom:none; }
+.hero-card-row svg{ width:20px; height:20px; color: var(--verde-claro); flex-shrink:0; margin-top:2px; }
+.hero-card-row strong{ display:block; font-size:.92rem; }
+.hero-card-row small{ color: rgba(255,255,255,.65); font-size:.8rem; }
+
+/* =========================================================================
+   Secciones generales
+   ========================================================================= */
+.section{ padding: 84px 0; }
+.section-tight{ padding: 56px 0; }
+.section-alt{ background: var(--panel); }
+.section-dark{ background: var(--verde-oscuro); color: var(--blanco); }
+.section-dark h2, .section-dark h3{ color: var(--blanco); }
+.section-dark p{ color: rgba(255,255,255,.72); }
+.section-head{ max-width: 640px; margin: 0 0 44px; }
+.section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+
+.grid-3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; }
+.grid-2{ display:grid; grid-template-columns: repeat(2, 1fr); gap:24px; }
+
+.card{
+  background: var(--blanco); border: 1px solid var(--linea); border-radius: var(--r-md);
+  padding: 28px; box-shadow: var(--shadow-sm); transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+.card:hover{ transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.icon-badge{
+  width:46px; height:46px; border-radius: var(--r-sm); background: var(--panel-2);
+  color: var(--verde-brillante); display:grid; place-items:center; margin-bottom:16px;
+}
+.icon-badge svg{ width:24px; height:24px; }
+.icon-badge.dark{ background: var(--verde-oscuro); color: var(--verde-claro); }
+
+/* Qué es EcoRegión */
+.about-grid{ display:grid; grid-template-columns: .9fr 1.1fr; gap:56px; align-items:center; }
+.about-visual{
+  aspect-ratio: 4/3; border-radius: var(--r-lg); background: var(--verde-oscuro);
+  position:relative; overflow:hidden; display:grid; place-items:center;
+}
+.about-visual svg{ width:62%; height:62%; }
+.pill-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+.pill{ font-family: var(--font-mono); font-size:.75rem; padding:7px 14px; border-radius: var(--r-pill); background: var(--panel-2); color: var(--verde-oscuro); border:1px solid var(--linea); }
+
+/* Problema */
+.problem-list{ display:flex; flex-direction:column; gap:0; }
+.problem-item{ display:flex; gap:18px; padding:22px 0; border-bottom:1px solid var(--linea); }
+.problem-item:first-child{ padding-top:0; }
+.problem-item .num{ font-family: var(--font-mono); color: var(--verde-claro); background: var(--verde-oscuro); width:38px; height:38px; border-radius:50%; display:grid; place-items:center; flex-shrink:0; font-size:.85rem; font-weight:700; }
+.problem-item h4{ margin:0 0 6px; font-family: var(--font-body); color: var(--verde-oscuro); font-size:1.02rem; font-weight:700; }
+.problem-item p{ margin:0; font-size:.94rem; }
+
+/* Pasos del trámite (landing) */
+.steps-strip{ display:grid; grid-template-columns: repeat(5,1fr); gap:16px; counter-reset: step; }
+.step-chip{ background: var(--blanco); border:1px solid var(--linea); border-radius: var(--r-md); padding:20px 18px; position:relative; }
+.step-chip .ring{ width:34px; height:34px; margin-bottom:14px; }
+.step-chip h4{ font-size:.92rem; margin:0 0 6px; color: var(--verde-oscuro); }
+.step-chip p{ font-size:.82rem; margin:0; }
+
+/* CTA banda final landing */
+.cta-band{ background: var(--verde-brillante); border-radius: var(--r-lg); padding:52px; text-align:center; position:relative; overflow:hidden; }
+.cta-band h2{ color: var(--verde-oscuro); }
+.cta-band p{ color: rgba(46,70,48,.78); max-width:52ch; margin-left:auto; margin-right:auto; }
+
+/* Footer */
+.footer{ background: var(--verde-oscuro); color: rgba(255,255,255,.7); padding:44px 0 28px; }
+.footer .container{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:24px; }
+.footer strong{ color: var(--blanco); }
+.footer-brand{ display:flex; align-items:center; gap:10px; color: var(--blanco); font-family: var(--font-display); font-size:1.1rem; margin-bottom:8px; }
+.footer small{ display:block; margin-top:18px; opacity:.6; font-size:.78rem; }
+
+/* =========================================================================
+   App / Plataforma (wizard)
+   ========================================================================= */
+.app-shell{ display:none; background: var(--panel); min-height: 100vh; }
+.app-shell.active{ display:block; }
+.landing-shell{ display:block; }
+.landing-shell.hidden{ display:none; }
+
+.app-header{ background: var(--blanco); border-bottom:1px solid var(--linea); position:sticky; top:0; z-index:30; }
+.app-header .container{ display:flex; align-items:center; justify-content:space-between; height:72px; }
+.app-header .brand{ font-size:1.1rem; }
+.exit-app{ display:flex; align-items:center; gap:8px; font-size:.85rem; font-weight:700; color: var(--tinta-suave); background:none; border:none; cursor:pointer; }
+.exit-app:hover{ color: var(--alerta); }
+
+/* Barra de progreso — anillos de crecimiento */
+.progress-wrap{ background: var(--blanco); border-bottom:1px solid var(--linea); }
+.progress-track{ display:flex; align-items:center; gap:0; padding: 22px 24px; max-width:1120px; margin:0 auto; overflow-x:auto; }
+.progress-step{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.ring{ width:36px; height:36px; border-radius:50%; border:2.5px solid var(--linea); display:grid; place-items:center; font-family: var(--font-mono); font-size:.78rem; font-weight:700; color: var(--tinta-suave); background:var(--blanco); transition: all .3s var(--ease); flex-shrink:0; }
+.ring svg{ width:16px; height:16px; }
+.progress-step.done .ring{ background: var(--verde-brillante); border-color: var(--verde-brillante); color: var(--blanco); }
+.progress-step.active .ring{ border-color: var(--verde-brillante); color: var(--verde-brillante); box-shadow: 0 0 0 5px rgba(80,181,15,.14); }
+.progress-step .label{ font-size:.82rem; font-weight:700; color: var(--tinta-suave); white-space:nowrap; }
+.progress-step.active .label{ color: var(--verde-oscuro); }
+.progress-step.done .label{ color: var(--verde-oscuro); }
+.progress-connector{ width:36px; height:2px; background: var(--linea); margin:0 8px; flex-shrink:0; transition: background .3s; }
+.progress-connector.done{ background: var(--verde-brillante); }
+
+.wizard-body{ padding: 44px 0 90px; }
+.wizard-head{ margin-bottom:34px; }
+.wizard-head .eyebrow{ margin-bottom:10px; }
+.panel{ background: var(--blanco); border:1px solid var(--linea); border-radius: var(--r-lg); padding:36px; box-shadow: var(--shadow-sm); }
+.wizard-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:30px; }
+.wizard-nav .spacer{ flex:1; }
+
+/* Formularios */
+.form-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; }
+.field{ display:flex; flex-direction:column; gap:7px; }
+.field.full{ grid-column: 1 / -1; }
+.field label{ font-size:.83rem; font-weight:700; color: var(--verde-oscuro); }
+.field .hint{ font-size:.76rem; color: var(--tinta-suave); font-weight:400; margin-top:2px; }
+.field input, .field select, .field textarea{
+  font-family: var(--font-body); font-size:.95rem; color: var(--tinta);
+  padding: 12px 14px; border-radius: var(--r-sm); border: 1.5px solid var(--linea); background: var(--blanco);
+  transition: border-color .18s, box-shadow .18s; width:100%;
+}
+.field input:focus, .field select:focus, .field textarea:focus{ border-color: var(--verde-brillante); box-shadow: 0 0 0 4px rgba(80,181,15,.13); outline:none; }
+.field textarea{ resize: vertical; min-height: 96px; }
+.field.error input, .field.error select, .field.error textarea{ border-color: var(--alerta); }
+.field .error-msg{ display:none; font-size:.78rem; color: var(--alerta); font-weight:600; }
+.field.error .error-msg{ display:block; }
+fieldset{ border:none; padding:0; margin: 8px 0 0; }
+legend{ font-family: var(--font-display); color: var(--verde-oscuro); font-size:1.05rem; margin-bottom:16px; padding:0; }
+
+.section-divider{ display:flex; align-items:center; gap:14px; margin: 32px 0 20px; }
+.section-divider span{ font-family: var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color: var(--verde-brillante); white-space:nowrap; }
+.section-divider::after{ content:""; height:1px; flex:1; background: var(--linea); }
+
+/* Selección de autoridad */
+.authority-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:22px; }
+.authority-card{
+  border: 2px solid var(--linea); border-radius: var(--r-md); padding:26px; cursor:pointer; text-align:left;
+  background: var(--blanco); transition: all .18s var(--ease); position:relative;
+}
+.authority-card:hover{ border-color: var(--verde-claro); transform: translateY(-2px); }
+.authority-card.selected{ border-color: var(--verde-brillante); box-shadow: 0 0 0 4px rgba(80,181,15,.13); }
+.authority-card .check{ position:absolute; top:20px; right:20px; width:24px; height:24px; border-radius:50%; border:2px solid var(--linea); display:grid; place-items:center; }
+.authority-card.selected .check{ background: var(--verde-brillante); border-color: var(--verde-brillante); color:var(--blanco); }
+.authority-card .check svg{ width:14px; height:14px; opacity:0; transition: opacity .15s; }
+.authority-card.selected .check svg{ opacity:1; }
+.authority-card .icon-badge{ margin-bottom:14px; }
+.authority-card h3{ margin-bottom:4px; }
+.authority-card .scope{ font-size:.85rem; }
+.authority-requisitos{ margin-top:28px; padding-top:24px; border-top:1px dashed var(--linea); }
+.req-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+.req-list li{ display:flex; gap:10px; align-items:flex-start; font-size:.9rem; color: var(--tinta); }
+.req-list li svg{ width:17px; height:17px; color: var(--verde-brillante); flex-shrink:0; margin-top:2px; }
+
+.badge-provisional{
+  display:inline-flex; align-items:center; gap:6px; font-family: var(--font-mono); font-size:.7rem;
+  background: var(--alerta-bg); color: var(--alerta); padding:5px 11px; border-radius: var(--r-pill); font-weight:700; letter-spacing:.02em;
+}
+
+/* =========================================================================
+   Formulario de Solicitud de Aprovechamiento Forestal (Paso 1 · 5 secciones)
+   ========================================================================= */
+.form-forestal{ display:flex; flex-direction:column; gap:0; }
+
+/* Anillos de progreso concéntricos (dendrocronología) */
+.ring-progress-wrap{ display:flex; align-items:center; justify-content:center; gap:20px; margin-bottom:28px; flex-wrap:wrap; }
+.ring-progress{ width:150px; height:150px; flex-shrink:0; transform: rotate(-90deg); }
+.ring-progress .ring{
+  fill:none; stroke: var(--linea); stroke-width:9; stroke-linecap:round;
+  transition: stroke .4s var(--ease), stroke-width .4s var(--ease), opacity .4s;
+}
+.ring-progress .ring.done{ stroke: var(--verde-brillante); }
+.ring-progress .ring.active{ stroke: var(--verde-oscuro); stroke-width:11; animation: ring-pulse 1.8s ease-in-out infinite; }
+@keyframes ring-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.55; } }
+.ring-progress-label{ text-align:center; }
+.ring-progress-label span{ font-family: var(--font-display); font-size:2.2rem; color: var(--verde-oscuro); font-weight:600; }
+.ring-progress-label small{ font-family: var(--font-display); font-size:1.1rem; color: var(--tinta-suave); }
+.ring-progress-caption{ font-family: var(--font-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color: var(--tinta-suave); margin-top:2px; }
+
+/* Numeración de secciones 01–05 */
+.section-stepper{ display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:36px; flex-wrap:wrap; }
+.section-stepper-item{
+  display:flex; align-items:center; gap:9px; padding:8px 14px; border-radius: var(--r-pill);
+  cursor:default; opacity:.55; transition: all .2s var(--ease);
+}
+.section-stepper-item .num{
+  font-family: var(--font-mono); font-weight:700; font-size:.78rem; width:30px; height:30px; border-radius:50%;
+  display:grid; place-items:center; border:2px solid var(--linea); color: var(--tinta-suave); background: var(--blanco); flex-shrink:0;
+}
+.section-stepper-item .name{ font-size:.78rem; font-weight:700; color: var(--tinta-suave); white-space:nowrap; }
+.section-stepper-item.done{ opacity:1; cursor:pointer; }
+.section-stepper-item.done .num{ background: var(--verde-brillante); border-color: var(--verde-brillante); color: var(--blanco); }
+.section-stepper-item.done .name{ color: var(--verde-oscuro); }
+.section-stepper-item.active{ opacity:1; background: var(--panel-2); }
+.section-stepper-item.active .num{ border-color: var(--verde-oscuro); color: var(--verde-oscuro); box-shadow: 0 0 0 4px rgba(46,70,48,.1); }
+.section-stepper-item.active .name{ color: var(--verde-oscuro); }
+.section-stepper-connector{ width:22px; height:2px; background: var(--linea); flex-shrink:0; }
+
+.form-section-head{ display:flex; align-items:flex-start; gap:16px; margin-bottom:24px; }
+.section-num{
+  font-family: var(--font-display); font-size:2.4rem; font-weight:600; color: var(--verde-claro);
+  line-height:1; flex-shrink:0; -webkit-text-stroke: 1.5px var(--verde-oscuro);
+}
+.form-section-head h3{ margin-bottom:2px; }
+.form-section-head p{ margin:0; font-size:.88rem; }
+.form-section{ animation: section-in .35s var(--ease); }
+@keyframes section-in{ from{ opacity:0; transform: translateY(8px);} to{ opacity:1; transform:none; } }
+
+.form-section-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:32px; padding-top:24px; border-top:1px solid var(--linea); }
+
+/* Campo de especies con tags */
+.tag-input{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 12px; border-radius: var(--r-sm);
+  border: 1.5px solid var(--linea); background: var(--blanco); transition: border-color .18s, box-shadow .18s;
+}
+.tag-input:focus-within{ border-color: var(--verde-brillante); box-shadow: 0 0 0 4px rgba(80,181,15,.13); }
+.tag-list{ display:flex; flex-wrap:wrap; gap:8px; }
+.tag-chip{
+  display:flex; align-items:center; gap:7px; background: var(--panel-2); color: var(--verde-oscuro);
+  font-size:.83rem; font-weight:700; padding:6px 8px 6px 12px; border-radius: var(--r-pill);
+}
+.tag-chip button{ background: none; border:none; cursor:pointer; color: var(--verde-oscuro); opacity:.6; display:grid; place-items:center; padding:2px; }
+.tag-chip button:hover{ opacity:1; }
+.tag-chip button svg{ width:13px; height:13px; }
+.tag-input input{ flex:1; min-width:160px; border:none; outline:none; font-family: var(--font-body); font-size:.95rem; padding:6px 4px; background:transparent; }
+
+/* Checkbox de declaración */
+.checkbox-field{ display:flex; align-items:flex-start; gap:11px; cursor:pointer; font-size:.92rem; color: var(--tinta); font-weight:600; }
+.checkbox-field input{ width:20px; height:20px; margin-top:1px; accent-color: var(--verde-brillante); flex-shrink:0; cursor:pointer; }
+
+/* Checklist de documentos anexos (sección 05) */
+.checklist-doc{ display:flex; flex-direction:column; gap:0; border:1px solid var(--linea); border-radius: var(--r-md); overflow:hidden; }
+.checklist-doc-item{ display:flex; align-items:center; gap:14px; padding:16px 18px; border-bottom:1px solid var(--linea); background: var(--blanco); transition: background .15s; }
+.checklist-doc-item:last-child{ border-bottom:none; }
+.checklist-doc-item:hover{ background: var(--panel); }
+.checklist-doc-item input[type="checkbox"]{ width:21px; height:21px; accent-color: var(--verde-brillante); cursor:pointer; flex-shrink:0; }
+.checklist-doc-item label{ flex:1; font-size:.92rem; color: var(--tinta); font-weight:600; cursor:pointer; }
+.checklist-doc-item .check-status{ width:22px; height:22px; border-radius:50%; display:grid; place-items:center; background: var(--panel-2); color: var(--verde-brillante); opacity:0; transition: opacity .15s; }
+.checklist-doc-item.checked .check-status{ opacity:1; }
+.checklist-doc-item .check-status svg{ width:13px; height:13px; }
+
+/* Revisión */
+.review-block{ margin-bottom:26px; }
+.review-block-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.review-block-head h3{ margin:0; }
+.review-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap: 14px 28px; }
+.review-item{ display:flex; flex-direction:column; gap:3px; padding:12px 0; border-bottom:1px solid var(--linea); }
+.review-item dt{ font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color: var(--tinta-suave); font-weight:700; }
+.review-item dd{ margin:0; font-size:.95rem; color: var(--tinta); font-weight:600; }
+
+/* Documento generado */
+.doc-preview{ background: var(--blanco); border:1px solid var(--linea); border-radius: var(--r-md); overflow:hidden; }
+.doc-toolbar{ background: var(--panel); padding:14px 22px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--linea); }
+.doc-toolbar .filename{ font-family: var(--font-mono); font-size:.82rem; color: var(--verde-oscuro); font-weight:700; }
+.doc-page{ padding: 40px 48px; font-family: var(--font-mono); font-size:.86rem; line-height:1.8; color: var(--tinta); max-height: 560px; overflow-y:auto; }
+.doc-page h4{ font-family: var(--font-body); color: var(--verde-oscuro); font-size:.95rem; text-transform:uppercase; letter-spacing:.04em; margin: 22px 0 10px; }
+.doc-page h4:first-child{ margin-top:0; }
+.doc-page .doc-title{ font-family: var(--font-display); font-size:1.4rem; color: var(--verde-oscuro); margin-bottom:4px; }
+.doc-page .doc-sub{ color: var(--tinta-suave); margin-bottom:22px; font-size:.8rem; }
+.doc-page table{ width:100%; border-collapse: collapse; margin: 10px 0 16px; font-size:.82rem; }
+.doc-page td, .doc-page th{ border:1px solid var(--linea); padding:7px 10px; text-align:left; }
+.doc-page th{ background: var(--panel); }
+.gen-loading{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 70px 20px; gap:18px; }
+.gen-spinner{ width:64px; height:64px; }
+.gen-loading p{ font-weight:700; color: var(--verde-oscuro); font-family: var(--font-mono); font-size:.85rem; }
+
+/* Anexos */
+.anexos-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
+.anexo-card{ display:flex; align-items:flex-start; gap:16px; border:1px solid var(--linea); border-radius: var(--r-md); padding:20px; background: var(--blanco); }
+.anexo-card .icon-badge{ margin-bottom:0; flex-shrink:0; }
+.anexo-card h4{ margin:0 0 4px; font-size:.96rem; color: var(--verde-oscuro); }
+.anexo-card .status{ display:flex; align-items:center; gap:6px; font-size:.78rem; font-weight:700; margin-top:10px; }
+.anexo-card .status.ok{ color: var(--verde-brillante); }
+.anexo-card .status.pending{ color: var(--tinta-suave); }
+.anexo-card .actions{ margin-top:12px; }
+.anexo-card .filetag{ font-family: var(--font-mono); font-size:.68rem; background: var(--panel-2); color: var(--verde-oscuro); padding:2px 8px; border-radius:6px; margin-left:8px; }
+
+/* Subida real de documentos por autoridad */
+.uploads-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:18px; }
+.upload-card{ display:flex; align-items:flex-start; gap:16px; border:1.5px dashed var(--linea); border-radius: var(--r-md); padding:20px; background: var(--blanco); transition: border-color .18s; }
+.upload-card.has-file{ border-style:solid; border-color: var(--verde-claro); background: var(--panel-2); }
+.upload-card .icon-badge{ margin-bottom:0; flex-shrink:0; }
+.upload-card h4{ margin:0 0 10px; font-size:.9rem; line-height:1.4; color: var(--verde-oscuro); }
+.upload-slot{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.upload-slot input[type="file"]{ position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
+.upload-filename{ font-size:.8rem; color: var(--tinta-suave); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px; }
+.upload-card.has-file .upload-filename{ color: var(--verde-oscuro); font-weight:600; }
+.upload-card .status{ display:flex; align-items:center; gap:6px; font-size:.78rem; font-weight:700; margin-top:12px; }
+.upload-card .status.ok{ color: var(--verde-brillante); }
+.upload-card .status.pending{ color: var(--tinta-suave); }
+.upload-hint{ font-size:.74rem; color: var(--tinta-suave); margin-top:6px; }
+
+/* Encuesta */
+.survey-scale{ display:flex; gap:10px; flex-wrap:wrap; }
+.scale-opt{ flex:1; min-width:64px; text-align:center; border:1.5px solid var(--linea); border-radius: var(--r-sm); padding:16px 8px; cursor:pointer; background: var(--blanco); transition: all .15s; }
+.scale-opt:hover{ border-color: var(--verde-claro); }
+.scale-opt.selected{ border-color: var(--verde-brillante); background: var(--panel-2); }
+.scale-opt .emoji{ font-size:1.5rem; display:block; margin-bottom:6px; }
+.scale-opt span.txt{ font-size:.74rem; font-weight:700; color: var(--tinta-suave); }
+.nps-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.nps-opt{ width:42px; height:42px; border-radius:50%; border:1.5px solid var(--linea); background:var(--blanco); cursor:pointer; font-family: var(--font-mono); font-weight:700; color:var(--tinta-suave); transition: all .15s; }
+.nps-opt:hover{ border-color: var(--verde-claro); }
+.nps-opt.selected{ background: var(--verde-brillante); border-color: var(--verde-brillante); color:var(--blanco); }
+
+.finish-panel{ text-align:center; padding: 60px 40px; }
+.finish-panel .icon-badge{ margin: 0 auto 22px; width:72px; height:72px; border-radius:50%; }
+.finish-panel .icon-badge svg{ width:34px; height:34px; }
+
+/* Toast */
+.toast{
+  position: fixed; bottom: 26px; left:50%; transform: translateX(-50%) translateY(20px);
+  background: var(--verde-oscuro); color: var(--blanco); padding: 14px 22px; border-radius: var(--r-pill);
+  display:flex; align-items:center; gap:10px; font-size:.88rem; font-weight:600; box-shadow: var(--shadow-lg);
+  opacity:0; pointer-events:none; transition: all .3s var(--ease); z-index: 200;
+}
+.toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+.toast svg{ width:18px; height:18px; color: var(--verde-claro); flex-shrink:0; }
+
+/* =========================================================================
+   Chatbot
+   ========================================================================= */
+.chat-fab{
+  position: fixed; bottom: 26px; right: 26px; z-index: 150;
+  width:60px; height:60px; border-radius:50%; background: var(--verde-oscuro); color: var(--verde-claro);
+  border:none; cursor:pointer; display:grid; place-items:center; box-shadow: var(--shadow-lg);
+  transition: transform .2s var(--ease);
+}
+.chat-fab:hover{ transform: scale(1.06); }
+.chat-fab svg{ width:26px; height:26px; }
+.chat-fab .dot{ position:absolute; top:12px; right:12px; width:10px; height:10px; border-radius:50%; background: var(--verde-claro); border:2px solid var(--verde-oscuro); }
+
+.chat-window{
+  position: fixed; bottom: 98px; right: 26px; z-index: 150;
+  width: 360px; max-width: calc(100vw - 40px); height: 480px; max-height: calc(100vh - 150px);
+  background: var(--blanco); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); border:1px solid var(--linea);
+  display:flex; flex-direction:column; overflow:hidden;
+  opacity:0; transform: translateY(16px) scale(.98); pointer-events:none; transition: all .22s var(--ease);
+}
+.chat-window.open{ opacity:1; transform: translateY(0) scale(1); pointer-events:auto; }
+.chat-head{ background: var(--verde-oscuro); color: var(--blanco); padding:16px 18px; display:flex; align-items:center; gap:12px; }
+.chat-head .avatar{ width:36px; height:36px; border-radius:50%; background: var(--verde-brillante); display:grid; place-items:center; color: var(--verde-oscuro); flex-shrink:0; }
+.chat-head .avatar svg{ width:19px; height:19px; }
+.chat-head strong{ display:block; font-size:.92rem; }
+.chat-head small{ opacity:.7; font-size:.74rem; }
+.chat-head button{ margin-left:auto; background:none; border:none; color: rgba(255,255,255,.7); cursor:pointer; }
+.chat-body{ flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; background: var(--panel); }
+.msg{ max-width: 85%; padding:10px 14px; border-radius: 14px; font-size:.87rem; line-height:1.5; }
+.msg.bot{ background: var(--blanco); border:1px solid var(--linea); align-self:flex-start; border-bottom-left-radius:4px; color: var(--tinta); }
+.msg.user{ background: var(--verde-brillante); color: var(--blanco); align-self:flex-end; border-bottom-right-radius:4px; }
+.chat-suggestions{ display:flex; flex-wrap:wrap; gap:8px; padding: 0 16px 12px; background: var(--panel); }
+.chip-suggest{ background: var(--blanco); border:1px solid var(--linea); border-radius: var(--r-pill); padding:7px 13px; font-size:.76rem; cursor:pointer; color: var(--verde-oscuro); font-weight:600; }
+.chip-suggest:hover{ border-color: var(--verde-brillante); color: var(--verde-brillante); }
+.chat-input{ display:flex; gap:8px; padding:12px; border-top:1px solid var(--linea); background: var(--blanco); }
+.chat-input input{ flex:1; border:1.5px solid var(--linea); border-radius: var(--r-pill); padding:10px 16px; font-size:.87rem; font-family: inherit; }
+.chat-input input:focus{ outline:none; border-color: var(--verde-brillante); }
+.chat-input button{ width:40px; height:40px; border-radius:50%; background: var(--verde-brillante); color:var(--blanco); border:none; display:grid; place-items:center; cursor:pointer; flex-shrink:0; }
+.chat-input button svg{ width:17px; height:17px; }
+
+/* =========================================================================
+   Utilidades / animaciones de entrada
+   ========================================================================= */
+.reveal{ opacity:0; transform: translateY(16px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.reveal.in{ opacity:1; transform: translateY(0); }
+.spin{ animation: spin 1s linear infinite; }
+@keyframes spin{ to{ transform: rotate(360deg); } }
+.pulse-ring{ animation: pulse 2.4s var(--ease) infinite; }
+@keyframes pulse{ 0%{ box-shadow: 0 0 0 0 rgba(80,181,15,.35);} 70%{ box-shadow: 0 0 0 14px rgba(80,181,15,0);} 100%{ box-shadow:0 0 0 0 rgba(80,181,15,0);} }
+
+/* =========================================================================
+   Responsive
+   ========================================================================= */
+@media (max-width: 900px){
+  .hero-grid{ grid-template-columns: 1fr; }
+  .hero-card{ order:-1; }
+  .about-grid{ grid-template-columns: 1fr; }
+  .grid-3{ grid-template-columns: 1fr 1fr; }
+  .steps-strip{ grid-template-columns: repeat(3,1fr); }
+  .anexos-grid{ grid-template-columns: 1fr; }
+  .uploads-grid{ grid-template-columns: 1fr; }
+  .review-grid{ grid-template-columns: 1fr; }
+}
+@media (max-width: 640px){
+  .nav-links{ display:none; }
+  .nav-toggle{ display:block; }
+  .grid-3, .grid-2{ grid-template-columns: 1fr; }
+  .steps-strip{ grid-template-columns: 1fr 1fr; }
+  .form-grid{ grid-template-columns: 1fr; }
+  .panel{ padding:22px; }
+  .doc-page{ padding: 24px 20px; }
+  .cta-band{ padding: 36px 22px; }
+  .footer .container{ flex-direction:column; }
+  .chat-window{ width: calc(100vw - 32px); right:16px; height: 66vh; }
+  .chat-fab{ right:16px; bottom:16px; }
+  .hero{ padding: 48px 0 40px; }
+  .section{ padding: 56px 0; }
+  .ring-progress{ width:110px; height:110px; }
+  .ring-progress-label span{ font-size:1.6rem; }
+  .section-stepper-item .name{ display:none; }
+  .section-stepper-connector{ width:12px; }
+  .section-num{ font-size:1.8rem; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     LANDING
+     ========================================================= -->
+<div id="landing-shell" class="landing-shell">
+
+  <header class="navbar">
+    <div class="container">
+      <button class="brand" data-scroll="top">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 3.2 7 7.4 7 11a7 7 0 0 1-14 0c0-3.6 3-7.8 7-11z"/></svg>
+        </span>
+        EcoRegión
+      </button>
+      <nav>
+        <ul class="nav-links">
+          <li><a data-scroll="que-es">¿Qué es?</a></li>
+          <li><a data-scroll="problema">El problema</a></li>
+          <li><a data-scroll="pasos">Cómo funciona</a></li>
+          <li><a data-scroll="contacto">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="nav-cta">
+        <button class="btn btn-primary btn-sm" id="btn-nav-start">Iniciar trámite</button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <ul class="nav-links-mobile" id="nav-links-mobile">
+      <li><a data-scroll="que-es">¿Qué es?</a></li>
+      <li><a data-scroll="problema">El problema</a></li>
+      <li><a data-scroll="pasos">Cómo funciona</a></li>
+      <li><a data-scroll="contacto">Contacto</a></li>
+    </ul>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="topo" aria-hidden="true">
+      <svg viewBox="0 0 1200 500" preserveAspectRatio="none" fill="none">
+        <path d="M-50 380 C 200 320, 300 420, 500 360 S 850 300, 1250 370" stroke="#99E567" stroke-width="1.5" opacity=".5"/>
+        <path d="M-50 320 C 220 260, 320 360, 520 300 S 870 250, 1250 310" stroke="#50B50F" stroke-width="1.5" opacity=".4"/>
+        <path d="M-50 260 C 240 210, 340 300, 540 250 S 890 210, 1250 260" stroke="#99E567" stroke-width="1.5" opacity=".35"/>
+        <path d="M-50 440 C 210 400, 330 470, 540 420 S 880 390, 1250 440" stroke="#2E4630" stroke-width="1.5" opacity=".18"/>
+      </svg>
+    </div>
+    <div class="container hero-grid">
+      <div class="hero-copy reveal in">
+        <div class="eyebrow">ECO REGIÓN SAS BIC · Consultoría ambiental y forestal</div>
+        <h1>Tu trámite de aprovechamiento forestal, ordenado desde el primer clic.</h1>
+        <p class="lead">Más de 9 años guiando proyectos ambientales se convierten en una plataforma que estructura tu proyecto, identifica la autoridad ambiental competente y arma el documento técnico y sus anexos, paso a paso.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="btn-hero-start">
+            Comenzar mi trámite
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <button class="btn btn-ghost" data-scroll="que-es">Conocer EcoRegión</button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><b>+9</b><span>años de experiencia</span></div>
+          <div class="hero-stat"><b>3 autoridades</b><span>CAR · SDA · Corpoboyacá</span></div>
+          <div class="hero-stat"><b>6 pasos</b><span>de tu trámite guiado</span></div>
+        </div>
+      </div>
+      <div class="hero-card reveal in">
+        <h3>Estado de tu trámite</h3>
+        <div class="hero-card-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <div><strong>Datos del proyecto</strong><small>Formulario guiado con validaciones</small></div>
+        </div>
+        <div class="hero-card-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
+          <div><strong>Autoridad ambiental</strong><small>Selección entre CAR, SDA o Corpoboyacá</small></div>
+        </div>
+        <div class="hero-card-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          <div><strong>Documento técnico</strong><small>Generación automática con tus datos</small></div>
+        </div>
+        <div class="hero-card-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <div><strong>Anexos requeridos</strong><small>Según la autoridad seleccionada</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUÉ ES ECOREGIÓN -->
+  <section class="section" id="que-es">
+    <div class="container about-grid">
+      <div class="about-visual reveal">
+        <svg viewBox="0 0 200 200" fill="none">
+          <circle cx="100" cy="100" r="92" stroke="#50B50F" stroke-width="1" opacity=".25"/>
+          <circle cx="100" cy="100" r="68" stroke="#99E567" stroke-width="1" opacity=".35"/>
+          <circle cx="100" cy="100" r="44" stroke="#99E567" stroke-width="1" opacity=".5"/>
+          <path d="M100 40c22 18 38 42 38 62a38 38 0 0 1-76 0c0-20 16-44 38-62z" fill="#99E567"/>
+          <path d="M100 40c22 18 38 42 38 62a38 38 0 0 1-76 0c0-20 16-44 38-62z" fill="none" stroke="#2E4630" stroke-width="2"/>
+          <path d="M100 78v62" stroke="#2E4630" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="reveal">
+        <div class="eyebrow">¿Qué es EcoRegión?</div>
+        <h2>Un puente digital entre tu proyecto y el trámite ambiental.</h2>
+        <p>EcoRegión es la plataforma de ECO REGIÓN SAS BIC para acompañar a personas naturales y jurídicas en la estructuración de solicitudes de aprovechamiento forestal. Convierte años de experiencia técnica en un flujo guiado, claro y consistente.</p>
+        <p>EcoRegión organiza la información de tu proyecto, aplica una lógica preparada por autoridad ambiental y genera automáticamente el documento técnico y sus anexos, dejando lista la estructura para incorporar, más adelante, los requisitos oficiales vigentes.</p>
+        <div class="pill-row">
+          <span class="pill">Consultoría forestal</span>
+          <span class="pill">Gestión ambiental</span>
+          <span class="pill">Sociedad BIC</span>
+          <span class="pill">+9 años de trayectoria</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEMA -->
+  <section class="section section-alt" id="problema">
+    <div class="container grid-2" style="align-items:center; grid-template-columns: 1fr 1fr;">
+      <div class="reveal">
+        <div class="eyebrow">El problema</div>
+        <h2>Los trámites ambientales aún dependen de procesos manuales.</h2>
+        <p>Cada solicitud de aprovechamiento forestal reúne información dispersa en formatos distintos, correos y hojas de cálculo. Eso abre espacio a reprocesos, errores de digitación y tiempos de espera evitables.</p>
+      </div>
+      <div class="problem-list reveal">
+        <div class="problem-item">
+          <div class="num">01</div>
+          <div><h4>Reprocesos constantes</h4><p>La información se solicita y transcribe varias veces entre el cliente, el consultor y la autoridad ambiental.</p></div>
+        </div>
+        <div class="problem-item">
+          <div class="num">02</div>
+          <div><h4>Errores por captura manual</h4><p>Datos del predio, del solicitante o del inventario forestal se pierden o se digitan de forma inconsistente.</p></div>
+        </div>
+        <div class="problem-item">
+          <div class="num">03</div>
+          <div><h4>Dependencia de un solo experto</h4><p>El conocimiento sobre requisitos vive en la cabeza del consultor, sin un flujo estandarizado que lo respalde.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROPUESTA DE VALOR -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head center reveal">
+        <div class="eyebrow" style="justify-content:center; display:inline-flex;">Propuesta de valor</div>
+        <h2>Un flujo guiado, pensado para reducir fricción en cada etapa.</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card reveal">
+          <div class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+          </div>
+          <h3>Datos capturados una sola vez</h3>
+          <p>El formulario del proyecto y del solicitante alimenta automáticamente el documento técnico y los anexos.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7z"/></svg>
+          </div>
+          <h3>Requisitos por autoridad</h3>
+          <p>Lógica preparada para diferenciar requisitos entre la CAR, la SDA y Corpoboyacá, lista para recibir normativa oficial.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5"/></svg>
+          </div>
+          <h3>Menos reprocesos</h3>
+          <p>Una pantalla de revisión permite editar la información antes de generar el documento y los anexos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASOS DEL TRÁMITE -->
+  <section class="section section-alt" id="pasos">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">Cómo funciona</div>
+        <h2>Cinco pasos sencillos para tu trámite</h2>
+        <p>Así avanza tu proyecto dentro de la plataforma, con una barra de progreso visible en todo momento.</p>
+      </div>
+      <div class="steps-strip" id="landing-steps"></div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>¿Listo para estructurar tu proyecto forestal?</h2>
+        <p>Diligencia tus datos y deja que EcoRegión te guíe hasta el documento técnico y sus anexos.</p>
+        <button class="btn btn-dark" id="btn-cta-start" style="margin-top:14px;">
+          Comenzar mi trámite
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" id="contacto">
+    <div class="container">
+      <div>
+        <div class="footer-brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#99E567" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 3.2 7 7.4 7 11a7 7 0 0 1-14 0c0-3.6 3-7.8 7-11z"/></svg>
+          EcoRegión
+        </div>
+        <p style="max-width:34ch; color:rgba(255,255,255,.6); font-size:.85rem;">Un producto de <strong>ECO REGIÓN SAS BIC</strong>, consultora ambiental y forestal con más de 9 años de experiencia.</p>
+      </div>
+      <div style="font-size:.85rem;">
+        <strong>Proyecto académico</strong>
+        <p style="color:rgba(255,255,255,.6); font-size:.85rem; max-width:32ch;">Prototipo (MVP) desarrollado para el reto de Aprovechamiento Forestal. No reemplaza trámites oficiales.</p>
+      </div>
+    </div>
+    <div class="container">
+      <small>© 2026 ECO REGIÓN SAS BIC. Los datos de requisitos y anexos son provisionales, sujetos a validación oficial.</small>
+    </div>
+  </footer>
+</div>
+
+<!-- =========================================================
+     APLICACIÓN / PLATAFORMA (wizard)
+     ========================================================= -->
+<div id="app-shell" class="app-shell">
+
+  <header class="app-header">
+    <div class="container">
+      <button class="brand" data-scroll="top" id="btn-app-brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 3.2 7 7.4 7 11a7 7 0 0 1-14 0c0-3.6 3-7.8 7-11z"/></svg>
+        </span>
+        EcoRegión
+      </button>
+      <button class="exit-app" id="btn-exit-app">
+        Salir
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-track" id="progress-track"></div>
+  </div>
+
+  <main class="wizard-body">
+    <div class="container">
+
+      <!-- PASO 1: SOLICITUD DE APROVECHAMIENTO FORESTAL (5 secciones) -->
+      <section class="wizard-step" data-step="datos">
+        <div class="wizard-head">
+          <div class="eyebrow">Paso 1 de 5 · Solicitud de Aprovechamiento Forestal</div>
+          <h2>Cuéntanos los datos de tu solicitud</h2>
+          <p>Completa las 5 secciones. Esta información alimentará el documento técnico y los anexos que veremos más adelante.</p>
+        </div>
+
+        <div class="panel form-forestal">
+
+          <!-- Indicador de progreso: anillos concéntricos -->
+          <div class="ring-progress-wrap">
+            <svg class="ring-progress" id="ring-progress" viewBox="0 0 220 220">
+              <circle class="ring ring-1" cx="110" cy="110" r="96"/>
+              <circle class="ring ring-2" cx="110" cy="110" r="76"/>
+              <circle class="ring ring-3" cx="110" cy="110" r="56"/>
+              <circle class="ring ring-4" cx="110" cy="110" r="36"/>
+              <circle class="ring ring-5" cx="110" cy="110" r="16"/>
+            </svg>
+            <div class="ring-progress-label">
+              <span id="ring-progress-count">0</span><small>/5</small>
+              <div class="ring-progress-caption">secciones completadas</div>
+            </div>
+          </div>
+
+          <!-- Numeración de secciones 01–05 -->
+          <div class="section-stepper" id="section-stepper"></div>
+
+          <form id="form-datos" novalidate>
+
+            <!-- 01 · Datos del solicitante -->
+            <div class="form-section" data-section="0">
+              <div class="form-section-head">
+                <span class="section-num">01</span>
+                <div><h3>Datos del solicitante</h3><p>Quién presenta la solicitud.</p></div>
+              </div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="f-tipoPersona">Tipo de persona</label>
+                  <select id="f-tipoPersona" name="tipoPersona" required></select>
+                </div>
+                <div class="field">
+                  <label for="f-nombreSolicitante">Nombre o razón social</label>
+                  <input id="f-nombreSolicitante" name="nombreSolicitante" type="text" placeholder="Ej: Juan Pérez / Reforestadora del Bosque S.A.S." required>
+                  <span class="error-msg">Este campo es obligatorio.</span>
+                </div>
+                <div class="field">
+                  <label for="f-tipoDocumento">Tipo de documento</label>
+                  <select id="f-tipoDocumento" name="tipoDocumento" required></select>
+                </div>
+                <div class="field">
+                  <label for="f-numeroDocumento">Número de documento</label>
+                  <input id="f-numeroDocumento" name="numeroDocumento" type="text" inputmode="numeric" placeholder="Ej: 1032456789" required>
+                  <span class="error-msg">Ingresa un número de documento válido.</span>
+                </div>
+                <div class="field">
+                  <label for="f-email">Correo electrónico</label>
+                  <input id="f-email" name="email" type="email" placeholder="nombre@correo.com" required>
+                  <span class="error-msg">Ingresa un correo electrónico válido.</span>
+                </div>
+                <div class="field">
+                  <label for="f-telefono">Teléfono de contacto</label>
+                  <input id="f-telefono" name="telefono" type="tel" placeholder="Ej: 3001234567" required>
+                  <span class="error-msg">Ingresa un teléfono válido.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 02 · Ubicación del predio -->
+            <div class="form-section" data-section="1" hidden>
+              <div class="form-section-head">
+                <span class="section-num">02</span>
+                <div><h3>Ubicación del predio</h3><p>Dónde se ubica el proyecto.</p></div>
+              </div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="f-departamento">Departamento</label>
+                  <select id="f-departamento" name="departamento" required></select>
+                  <span class="hint">Listado de referencia para el prototipo.</span>
+                </div>
+                <div class="field">
+                  <label for="f-municipio">Municipio / localidad</label>
+                  <input id="f-municipio" name="municipio" type="text" placeholder="Ej: Chía" required>
+                  <span class="error-msg">Este campo es obligatorio.</span>
+                </div>
+                <div class="field">
+                  <label for="f-veredaDireccion">Vereda o dirección del predio</label>
+                  <input id="f-veredaDireccion" name="veredaDireccion" type="text" placeholder="Ej: Vereda La Esperanza, finca El Roble">
+                  <span class="hint">Opcional en esta versión demo.</span>
+                </div>
+                <div class="field">
+                  <label for="f-area">Área del predio (hectáreas)</label>
+                  <input id="f-area" name="area" type="number" min="0" step="0.01" placeholder="Ej: 12.5" required>
+                  <span class="error-msg">Ingresa un área válida.</span>
+                </div>
+                <div class="field full">
+                  <label for="f-coordenadas">Coordenadas de referencia</label>
+                  <input id="f-coordenadas" name="coordenadas" type="text" placeholder="Ej: 4.8663, -74.0658">
+                  <span class="hint">Opcional. Latitud, longitud del punto central del predio.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 03 · Objeto del aprovechamiento -->
+            <div class="form-section" data-section="2" hidden>
+              <div class="form-section-head">
+                <span class="section-num">03</span>
+                <div><h3>Objeto del aprovechamiento</h3><p>Qué se solicita aprovechar.</p></div>
+              </div>
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="f-nombreProyecto">Nombre del proyecto o solicitud</label>
+                  <input id="f-nombreProyecto" name="nombreProyecto" type="text" placeholder="Ej: Aprovechamiento forestal predio La Esperanza" required>
+                  <span class="error-msg">Este campo es obligatorio.</span>
+                </div>
+                <div class="field">
+                  <label for="f-tipoAprovechamiento">Tipo de aprovechamiento</label>
+                  <select id="f-tipoAprovechamiento" name="tipoAprovechamiento" required></select>
+                </div>
+                <div class="field">
+                  <label for="f-volumenEstimado">Volumen estimado a aprovechar (m³)</label>
+                  <input id="f-volumenEstimado" name="volumenEstimado" type="number" min="0" step="0.1" placeholder="Ej: 85">
+                  <span class="hint">Opcional en esta versión demo.</span>
+                </div>
+                <div class="field full">
+                  <label for="f-especie-tag">Especies principales a intervenir</label>
+                  <div class="tag-input" id="tag-input-wrap">
+                    <div class="tag-list" id="especies-tags"></div>
+                    <input id="f-especie-tag" type="text" placeholder="Escribe una especie y presiona Enter…">
+                  </div>
+                  <span class="hint">Ej: Eucalipto, Pino pátula, Acacia. Presiona Enter para agregar cada una.</span>
+                </div>
+                <div class="field full">
+                  <label for="f-descripcion">Descripción breve del proyecto</label>
+                  <textarea id="f-descripcion" name="descripcion" placeholder="Describe el objetivo del aprovechamiento, el estado actual del predio y cualquier detalle relevante." required></textarea>
+                  <span class="error-msg">Este campo es obligatorio.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 04 · Fundamento normativo -->
+            <div class="form-section" data-section="3" hidden>
+              <div class="form-section-head">
+                <span class="section-num">04</span>
+                <div><h3>Fundamento normativo</h3><p>Base legal citada por el solicitante.</p></div>
+              </div>
+              <span class="badge-provisional" style="margin-bottom:16px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+                EcoRegión no determina el fundamento legal automáticamente
+              </span>
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="f-fundamentoNormativo">Normas, decretos o resoluciones en que fundamentas la solicitud</label>
+                  <textarea id="f-fundamentoNormativo" name="fundamentoNormativo" placeholder="Ej: cita aquí las normas que consideras aplicables a tu proyecto." required></textarea>
+                  <span class="hint">Este campo se diligencia con la información que tú dispongas o la que te indique tu asesor; EcoRegión no la completa ni la valida en este prototipo.</span>
+                  <span class="error-msg">Este campo es obligatorio.</span>
+                </div>
+                <div class="field full">
+                  <label class="checkbox-field">
+                    <input type="checkbox" id="f-declaracionVeracidad" required>
+                    <span>Declaro que la información suministrada en esta solicitud es veraz y completa.</span>
+                  </label>
+                  <span class="error-msg" id="err-declaracion">Debes confirmar esta declaración para continuar.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 05 · Documentos anexos -->
+            <div class="form-section" data-section="4" hidden>
+              <div class="form-section-head">
+                <span class="section-num">05</span>
+                <div><h3>Documentos anexos</h3><p>Soportes que acompañan la solicitud.</p></div>
+              </div>
+              <span class="badge-provisional" style="margin-bottom:16px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+                Checklist general provisional — los requisitos específicos por autoridad se muestran en el siguiente paso
+              </span>
+              <div class="checklist-doc" id="checklist-doc"></div>
+            </div>
+
+          </form>
+
+          <div class="form-section-nav">
+            <button type="button" class="btn btn-ghost" id="btn-section-prev">Sección anterior</button>
+            <span class="spacer"></span>
+            <button type="button" class="btn btn-primary" id="btn-section-next">Siguiente sección
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASO 2: AUTORIDAD AMBIENTAL -->
+      <section class="wizard-step" data-step="autoridad" hidden>
+        <div class="wizard-head">
+          <div class="eyebrow">Paso 2 de 5</div>
+          <h2>Selecciona la autoridad ambiental</h2>
+          <p>Este dato determina los requisitos y anexos que el sistema preparará para tu trámite.</p>
+        </div>
+        <div class="panel">
+          <div class="authority-grid" id="authority-grid"></div>
+          <div class="authority-requisitos" id="authority-requisitos" hidden></div>
+        </div>
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" data-prev="autoridad">Atrás</button>
+          <span class="spacer"></span>
+          <button class="btn btn-primary" data-next="autoridad" disabled id="btn-autoridad-next">Continuar
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- PASO 3: REVISIÓN -->
+      <section class="wizard-step" data-step="revision" hidden>
+        <div class="wizard-head">
+          <div class="eyebrow">Paso 3 de 5</div>
+          <h2>Revisa la información antes de continuar</h2>
+          <p>Verifica cada dato. Puedes editar cualquier sección antes de generar el documento técnico.</p>
+        </div>
+        <div class="panel" id="review-panel"></div>
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" data-prev="revision">Atrás</button>
+          <span class="spacer"></span>
+          <button class="btn btn-primary" data-next="revision">Confirmar y generar documento
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- PASO 4: DOCUMENTO -->
+      <section class="wizard-step" data-step="documento" hidden>
+        <div class="wizard-head">
+          <div class="eyebrow">Paso 4 de 5</div>
+          <h2>Documento técnico</h2>
+          <p>El sistema organiza tu información en la estructura base de un documento técnico de aprovechamiento forestal.</p>
+        </div>
+        <div class="doc-preview" id="doc-preview">
+          <div class="gen-loading" id="doc-loading">
+            <svg class="gen-spinner spin" viewBox="0 0 24 24" fill="none" stroke="#50B50F" stroke-width="1.6"><circle cx="12" cy="12" r="9" opacity=".25"/><path d="M21 12a9 9 0 0 0-9-9" stroke-linecap="round"/></svg>
+            <p>Generando documento técnico…</p>
+          </div>
+        </div>
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" data-prev="documento">Atrás</button>
+          <span class="spacer"></span>
+          <button class="btn btn-primary" data-next="documento" disabled id="btn-documento-next">Ver anexos requeridos
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- PASO 5: ANEXOS -->
+      <section class="wizard-step" data-step="anexos" hidden>
+        <div class="wizard-head">
+          <div class="eyebrow">Paso 5 de 5</div>
+          <h2>Anexos requeridos</h2>
+          <p>Estos son los anexos técnicos asociados a la autoridad ambiental seleccionada. Puedes generarlos y descargarlos desde cada tarjeta.</p>
+          <span class="badge-provisional" id="anexos-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            Requisitos y anexos provisionales — pendientes de validar con la autoridad oficial
+          </span>
+        </div>
+        <div class="section-divider"><span>Anexos técnicos generados automáticamente</span></div>
+        <p style="margin-bottom:8px;">Borradores de referencia que EcoRegión arma con tu información; puedes generarlos y descargarlos desde cada tarjeta.</p>
+        <div class="anexos-grid" id="anexos-grid" style="margin-top:24px;"></div>
+
+        <div class="section-divider" style="margin-top:36px;"><span>Documentos que debes adjuntar</span></div>
+        <p style="margin-bottom:20px;">Sube aquí los soportes reales que exige la autoridad ambiental seleccionada. Los archivos se guardan junto con tu registro.</p>
+        <div class="uploads-grid" id="uploads-grid"></div>
+
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" data-prev="anexos">Atrás</button>
+          <span class="spacer"></span>
+          <button class="btn btn-primary" data-next="anexos">Finalizar y calificar experiencia
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- PASO 6: ENCUESTA -->
+      <section class="wizard-step" data-step="encuesta" hidden>
+        <div class="wizard-head">
+          <div class="eyebrow">Último paso</div>
+          <h2>Cuéntanos cómo fue tu experiencia</h2>
+          <p>Tu opinión ayuda a mejorar la plataforma EcoRegión.</p>
+        </div>
+        <div class="panel" id="survey-panel">
+          <div class="field full" style="margin-bottom:28px;">
+            <label>¿Qué tan fácil fue completar el trámite?</label>
+            <div class="survey-scale" id="survey-facilidad">
+              <div class="scale-opt" data-value="1"><span class="emoji">😖</span><span class="txt">Muy difícil</span></div>
+              <div class="scale-opt" data-value="2"><span class="emoji">🙁</span><span class="txt">Difícil</span></div>
+              <div class="scale-opt" data-value="3"><span class="emoji">😐</span><span class="txt">Neutral</span></div>
+              <div class="scale-opt" data-value="4"><span class="emoji">🙂</span><span class="txt">Fácil</span></div>
+              <div class="scale-opt" data-value="5"><span class="emoji">😄</span><span class="txt">Muy fácil</span></div>
+            </div>
+          </div>
+          <div class="field full" style="margin-bottom:28px;">
+            <label>¿Qué tan probable es que recomiendes EcoRegión? (0 = nada probable, 10 = muy probable)</label>
+            <div class="nps-row" id="survey-nps"></div>
+          </div>
+          <div class="field full">
+            <label for="f-comentario">Comentarios adicionales (opcional)</label>
+            <textarea id="f-comentario" placeholder="Cuéntanos qué te gustó o qué mejorarías de la plataforma."></textarea>
+          </div>
+        </div>
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" data-prev="encuesta">Atrás</button>
+          <span class="spacer"></span>
+          <button class="btn btn-primary" id="btn-survey-submit">Enviar encuesta y finalizar
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- PANTALLA FINAL -->
+      <section class="wizard-step" data-step="fin" hidden>
+        <div class="panel finish-panel">
+          <div class="icon-badge dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 3.2 7 7.4 7 11a7 7 0 0 1-14 0c0-3.6 3-7.8 7-11z"/></svg>
+          </div>
+          <h2>¡Gracias por probar EcoRegión!</h2>
+          <p style="max-width:52ch; margin:0 auto 28px;">Tu registro quedó guardado. Este flujo demuestra el proceso completo del trámite de aprovechamiento forestal.</p>
+          <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="btn-restart">Registrar otro proyecto</button>
+            <button class="btn btn-ghost" id="btn-back-landing">Volver al inicio</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- =========================================================
+     CHATBOT
+     ========================================================= -->
+<button class="chat-fab pulse-ring" id="chat-fab" aria-label="Abrir asistente EcoRegión">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <span class="dot"></span>
+</button>
+
+<div class="chat-window" id="chat-window">
+  <div class="chat-head">
+    <div class="avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 3.2 7 7.4 7 11a7 7 0 0 1-14 0c0-3.6 3-7.8 7-11z"/></svg>
+    </div>
+    <div>
+      <strong>Asistente EcoRegión</strong>
+      <small>Te oriento durante el trámite</small>
+    </div>
+    <button id="chat-close" aria-label="Cerrar asistente">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="chat-body" id="chat-body"></div>
+  <div class="chat-suggestions" id="chat-suggestions"></div>
+  <form class="chat-input" id="chat-form">
+    <input type="text" id="chat-input" placeholder="Escribe tu pregunta…" autocomplete="off">
+    <button type="submit" aria-label="Enviar">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg>
+    </button>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/**
+ * EcoRegión · data.js
+ * -----------------------------------------------------------------------
+ * Catálogos y datos de referencia usados por la plataforma.
+ *
+ * ⚠️ IMPORTANTE — DATOS PROVISIONALES
+ * Los requisitos, tiempos y listas de anexos definidos en REQUISITOS_POR_AUTORIDAD
+ * son PROVISIONALES y se incluyen únicamente para dar forma a la lógica del
+ * proceso. NO constituyen asesoría legal ni información oficial de la
+ * Corporación Autónoma Regional de Cundinamarca (CAR), la Secretaría Distrital
+ * de Ambiente (SDA) ni la Corporación Autónoma Regional de Boyacá (Corpoboyacá).
+ * Antes de cualquier uso real, esta sección debe reemplazarse con la normativa
+ * vigente consultada directamente en las fuentes oficiales de cada autoridad.
+ * -----------------------------------------------------------------------
+ */
+
+const EcoRegionData = (() => {
+
+  // Tipos de aprovechamiento forestal (catálogo general, referencial)
+  const TIPOS_APROVECHAMIENTO = [
+    { id: "unico", label: "Aprovechamiento forestal único" },
+    { id: "persistente", label: "Aprovechamiento forestal persistente" },
+    { id: "domestico", label: "Aprovechamiento forestal doméstico" },
+    { id: "arbolado_aislado", label: "Tratamiento de arbolado aislado urbano" },
+  ];
+
+  const TIPOS_PERSONA = [
+    { id: "natural", label: "Persona natural" },
+    { id: "juridica", label: "Persona jurídica" },
+  ];
+
+  const TIPOS_DOCUMENTO = [
+    { id: "cc", label: "Cédula de ciudadanía" },
+    { id: "ce", label: "Cédula de extranjería" },
+    { id: "nit", label: "NIT" },
+  ];
+
+  // Autoridades ambientales soportadas en esta versión
+  const AUTORIDADES = [
+    {
+      id: "CAR",
+      nombre: "CAR Cundinamarca",
+      nombreCompleto: "Corporación Autónoma Regional de Cundinamarca",
+      cobertura: "Municipios de Cundinamarca fuera del perímetro urbano de Bogotá D.C.",
+      icono: "car",
+    },
+    {
+      id: "SDA",
+      nombre: "SDA Bogotá",
+      nombreCompleto: "Secretaría Distrital de Ambiente de Bogotá D.C.",
+      cobertura: "Perímetro urbano y rural del Distrito Capital de Bogotá",
+      icono: "sda",
+    },
+    {
+      id: "CORPOBOYACA",
+      nombre: "Corpoboyacá",
+      nombreCompleto: "Corporación Autónoma Regional de Boyacá",
+      cobertura: "87 municipios del departamento de Boyacá bajo su jurisdicción",
+      icono: "corpoboyaca",
+    },
+  ];
+
+  /**
+   * Estructura preparada para requisitos diferenciados por autoridad.
+   * Cada autoridad expone:
+   *  - documentosSolicitud: documentos que debe anexar el solicitante
+   *  - anexosTecnicos: anexos técnicos que el sistema genera automáticamente (borrador)
+   *  - tiempoEstimado: dato referencial de trámite (PROVISIONAL)
+   *  - notaOficial: recordatorio de que el dato es provisional
+   *
+   * Para incorporar información oficial en el futuro, basta con reemplazar
+   * el contenido de cada arreglo sin modificar la lógica que los consume
+   * (ver app.js → renderRequisitos / renderAnexos).
+   */
+  const REQUISITOS_POR_AUTORIDAD = {
+    CAR: {
+      documentosSolicitud: [
+        "Formulario único de solicitud de aprovechamiento forestal (provisional)",
+        "Certificado de tradición y libertad del predio (provisional)",
+        "Poder debidamente otorgado, si actúa a través de apoderado (provisional)",
+        "Certificado de existencia y representación legal, si es persona jurídica (provisional)",
+      ],
+      anexosTecnicos: [
+        { id: "car-plan-manejo", nombre: "Plan de manejo forestal", tipo: "PDF" },
+        { id: "car-inventario", nombre: "Inventario forestal al 100%", tipo: "XLSX" },
+        { id: "car-plano-ubicacion", nombre: "Plano de ubicación y localización del predio", tipo: "PDF" },
+        { id: "car-plano-forestal", nombre: "Plano forestal con georreferenciación", tipo: "PDF" },
+        { id: "car-cronograma", nombre: "Cronograma de aprovechamiento", tipo: "PDF" },
+      ],
+      documentosParaSubir: [
+        { id: "car-formato-unico", label: "Formato Único Nacional de Solicitud de Aprovechamiento Forestal y Manejo Sostenible de Flora Silvestre y los Productos Forestales No Maderables Nuevo/Prórroga, debidamente diligenciado" },
+        { id: "car-libertad-tradicion", label: "Certificado de libertad y tradición expedido dentro de los dos (2) meses inmediatamente anteriores a la presentación de la solicitud. Si se trata de predio ajeno se anexará la prueba de la posesión o tenencia." },
+        { id: "car-autorizacion-propietario", label: "Autorización escrita del propietario cuando el solicitante no sea el mismo propietario del predio" },
+        { id: "car-croquis", label: "Croquis a mano alzada para acceso al predio" },
+        { id: "car-representacion-legal", label: "Certificado de existencia y representación legal vigente, para el caso de personas jurídicas" },
+        { id: "car-poder", label: "Poder debidamente otorgado, cuando se actúa mediante abogado" },
+      ],
+      tiempoEstimado: "Dato provisional — sujeto a verificación con la CAR",
+      notaOficial: "Estructura de ejemplo. Pendiente de reemplazar con requisitos oficiales de la CAR.",
+    },
+    SDA: {
+      documentosSolicitud: [
+        "Formato de solicitud de tratamiento silvicultural (provisional)",
+        "Certificado de tradición y libertad o soporte de tenencia del predio (provisional)",
+        "Poder debidamente otorgado, si actúa a través de apoderado (provisional)",
+        "Certificado de existencia y representación legal, si es persona jurídica (provisional)",
+      ],
+      anexosTecnicos: [
+        { id: "sda-concepto-tecnico", nombre: "Concepto técnico de silvicultura urbana", tipo: "PDF" },
+        { id: "sda-inventario", nombre: "Inventario de individuos arbóreos", tipo: "XLSX" },
+        { id: "sda-registro-fotografico", nombre: "Registro fotográfico del arbolado", tipo: "ZIP" },
+        { id: "sda-plano-localizacion", nombre: "Plano de localización georreferenciado", tipo: "PDF" },
+        { id: "sda-plan-compensacion", nombre: "Plan de compensación arbórea", tipo: "PDF" },
+      ],
+      documentosParaSubir: [
+        { id: "sda-formulario-manejo", label: "Formulario solicitud manejo aprovechamiento forestal.xlsx" },
+        { id: "sda-ficha1-silvicultural", label: "Recolección información silvicultural individuo ficha1.xls" },
+        { id: "sda-ficha2-tecnica", label: "Ficha técnica de registro Ficha 2.docx" },
+      ],
+      tiempoEstimado: "Dato provisional — sujeto a verificación con la SDA",
+      notaOficial: "Estructura de ejemplo. Pendiente de reemplazar con requisitos oficiales de la SDA.",
+    },
+    CORPOBOYACA: {
+      documentosSolicitud: [
+        "Formulario único de solicitud de aprovechamiento forestal (provisional)",
+        "Certificado de tradición y libertad del predio (provisional)",
+        "Poder debidamente otorgado, si actúa a través de apoderado (provisional)",
+        "Certificado de existencia y representación legal, si es persona jurídica (provisional)",
+      ],
+      anexosTecnicos: [
+        { id: "cb-plan-manejo", nombre: "Plan de manejo forestal", tipo: "PDF" },
+        { id: "cb-inventario", nombre: "Inventario forestal al 100%", tipo: "XLSX" },
+        { id: "cb-plano-ubicacion", nombre: "Plano de ubicación y localización del predio", tipo: "PDF" },
+        { id: "cb-plano-forestal", nombre: "Plano forestal con georreferenciación", tipo: "PDF" },
+        { id: "cb-cronograma", nombre: "Cronograma de aprovechamiento", tipo: "PDF" },
+      ],
+      documentosParaSubir: [
+        { id: "cb-formato-unico", label: "Formato único nacional de solicitud de aprovechamiento forestal y manejo sostenible de flora silvestre y productos forestales no maderables" },
+        { id: "cb-fgr06-inventario", label: "Formato FGR-06 Parte A «Inventario Forestal al 100%» (incluir registro fotográfico y geo-rreferenciación por individuo marcado y destinado a aprovechar anexo en medio magnético)" },
+        { id: "cb-cedulas", label: "Fotocopias de cédula del o los propietarios del predio o representante legal según aplique" },
+        { id: "cb-representacion-legal", label: "Certificado de existencia y representación legal (persona jurídica)" },
+        { id: "cb-escritura", label: "Fotocopia escritura(s) del predio objeto de aprovechamiento" },
+        { id: "cb-libertad-tradicion", label: "Certificado de libertad y tradición con fecha de expedición no mayor a treinta (30) días" },
+        { id: "cb-autorizacion-propietario", label: "Autorización escrita del propietario del predio cuando se actúa como tenedor, si aplica" },
+        { id: "cb-fgr29-autodeclaracion", label: "Formato FGR-29 «Auto-declaración costos de inversión y anual de operación»" },
+        { id: "cb-recibo-pago", label: "Copia de recibo de consignación o factura de pago por servicios de evaluación ambiental a favor de Corpoboyacá" },
+      ],
+      tiempoEstimado: "Dato provisional — sujeto a verificación con Corpoboyacá",
+      notaOficial: "Estructura de ejemplo. Pendiente de reemplazar con requisitos oficiales de Corpoboyacá.",
+    },
+  };
+
+  const DEPARTAMENTOS_DEMO = [
+    "Cundinamarca",
+    "Bogotá D.C.",
+    "Boyacá",
+    "Tolima",
+    "Meta",
+  ];
+
+  const PASOS_TRAMITE = [
+    {
+      titulo: "Cuéntanos tu proyecto",
+      descripcion: "Registra los datos del predio, el solicitante y el tipo de aprovechamiento que necesitas.",
+    },
+    {
+      titulo: "Elige la autoridad ambiental",
+      descripcion: "Indícanos si tu proyecto aplica ante la CAR, la SDA o Corpoboyacá para ajustar los requisitos.",
+    },
+    {
+      titulo: "Revisa y ajusta",
+      descripcion: "Verifica la información antes de continuar; puedes editar cualquier campo.",
+    },
+    {
+      titulo: "Genera el documento técnico",
+      descripcion: "El sistema organiza automáticamente la estructura del documento técnico a partir de tus datos.",
+    },
+    {
+      titulo: "Obtén tus anexos",
+      descripcion: "Visualiza los anexos requeridos según la autoridad seleccionada.",
+    },
+  ];
+
+  /**
+   * Metadata de las 5 secciones del formulario de Solicitud de Aprovechamiento
+   * Forestal (paso "Datos del proyecto" del proceso). El orden y los nombres
+   * de sección corresponden al formato base del documento técnico y no deben
+   * alterarse sin revisar también app.js (goToFormSection / validateFormSection).
+   */
+  const SECCIONES_FORMULARIO = [
+    { id: "solicitante", numero: "01", titulo: "Datos del solicitante", subtitulo: "Quién presenta la solicitud" },
+    { id: "ubicacion",   numero: "02", titulo: "Ubicación del predio",   subtitulo: "Dónde se ubica el proyecto" },
+    { id: "objeto",      numero: "03", titulo: "Objeto del aprovechamiento", subtitulo: "Qué se solicita aprovechar" },
+    { id: "normativo",   numero: "04", titulo: "Fundamento normativo",   subtitulo: "Base legal citada por el solicitante" },
+    { id: "documentos",  numero: "05", titulo: "Documentos anexos",      subtitulo: "Soportes que acompañan la solicitud" },
+  ];
+
+  /**
+   * ⚠️ DATO PROVISIONAL — checklist general e independiente de la autoridad
+   * ambiental (en este punto del flujo aún no se ha seleccionado CAR, SDA o
+   * Corpoboyacá). Es una lista de referencia para que el solicitante declare
+   * qué soportes tiene listos; NO reemplaza los requisitos oficiales de cada
+   * autoridad, que se muestran más adelante en el paso "Autoridad ambiental"
+   * y en el paso "Anexos" (ver REQUISITOS_POR_AUTORIDAD).
+   */
+  const CHECKLIST_SOLICITUD_GENERAL = [
+    { id: "doc-identificacion", label: "Documento de identificación del solicitante" },
+    { id: "doc-tradicion", label: "Certificado de tradición y libertad del predio (o soporte de tenencia)" },
+    { id: "doc-poder", label: "Poder debidamente otorgado, si actúa mediante apoderado" },
+    { id: "doc-representacion", label: "Certificado de existencia y representación legal, si es persona jurídica" },
+    { id: "doc-fotografico", label: "Registro fotográfico general del predio" },
+  ];
+
+  return {
+    TIPOS_APROVECHAMIENTO,
+    TIPOS_PERSONA,
+    TIPOS_DOCUMENTO,
+    AUTORIDADES,
+    REQUISITOS_POR_AUTORIDAD,
+    DEPARTAMENTOS_DEMO,
+    PASOS_TRAMITE,
+    SECCIONES_FORMULARIO,
+    CHECKLIST_SOLICITUD_GENERAL,
+  };
+})();
+
+</script>
+<script>
+/**
+ * EcoRegión · chatbot.js
+ * -----------------------------------------------------------------------
+ * Asistente conversacional basado en reglas (sin backend externo).
+ * Ofrece orientación general y sugerencias contextuales según la pantalla
+ * activa de la plataforma.
+ * -----------------------------------------------------------------------
+ */
+
+const EcoBot = (() => {
+
+  let elFab, elWindow, elBody, elSuggestions, elForm, elInput, elClose;
+  let currentContext = "landing";
+  let opened = false;
+
+  const RESPONSES = [
+    {
+      test: /car\b|corporaci[oó]n aut[oó]noma/i,
+      answer: "La <strong>CAR</strong> es la autoridad ambiental de referencia para municipios de Cundinamarca fuera del perímetro urbano de Bogotá. Selecciónala en el paso 2 si tu predio está ubicado en esa jurisdicción. Recuerda que los requisitos mostrados son provisionales."
+    },
+    {
+      test: /sda\b|secretar[ií]a distrital/i,
+      answer: "La <strong>SDA</strong> es la autoridad ambiental competente dentro del perímetro urbano y rural de Bogotá D.C. Selecciónala en el paso 2 si tu proyecto se ubica en el Distrito Capital."
+    },
+    {
+      test: /corpoboyac[aá]/i,
+      answer: "<strong>Corpoboyacá</strong> es la autoridad ambiental competente en 87 municipios del departamento de Boyacá. Selecciónala en el paso 2 si tu predio está bajo su jurisdicción."
+    },
+    {
+      test: /requisito/i,
+      answer: "Los requisitos que ves aquí son <strong>datos provisionales</strong> pensados solo para mostrar la lógica del flujo. Se actualizarán con la información oficial de la CAR, la SDA y Corpoboyacá."
+    },
+    {
+      test: /anexo/i,
+      answer: "En el paso 5 encontrarás los anexos técnicos sugeridos según la autoridad ambiental que elegiste. Puedes generarlos y descargarlos con el botón dispuesto en cada tarjeta."
+    },
+    {
+      test: /documento t[eé]cnico|generar documento/i,
+      answer: "El documento técnico se arma automáticamente con la información que registraste en el paso 1, usando la estructura básica de este tipo de trámite."
+    },
+    {
+      test: /tiempo|cu[aá]nto (se demora|tarda)/i,
+      answer: "Los tiempos de trámite ante la autoridad ambiental aún no están definidos en este prototipo — se marcan como dato provisional hasta contar con la información oficial."
+    },
+    {
+      test: /encuesta/i,
+      answer: "Al finalizar el flujo te pediremos calificar tu experiencia en una breve encuesta. Nos ayuda a mejorar la plataforma."
+    },
+    {
+      test: /hola|buenas|qu[eé] tal/i,
+      answer: "¡Hola! Soy el asistente de EcoRegión 🌱. Puedo orientarte sobre el formulario, la autoridad ambiental, el documento técnico o los anexos. ¿En qué te ayudo?"
+    },
+    {
+      test: /gracias/i,
+      answer: "¡Con gusto! Si te surge otra duda durante el trámite, aquí estaré."
+    },
+  ];
+
+  const FALLBACK = "Puedo orientarte sobre el formulario del proyecto, la elección de autoridad ambiental (CAR, SDA o Corpoboyacá), el documento técnico o los anexos. ¿Sobre cuál te gustaría saber más?";
+
+  // Sugerencias contextuales según la pantalla activa del wizard
+  const CONTEXT_SUGGESTIONS = {
+    landing: ["¿Qué es EcoRegión?", "¿Cómo empiezo mi trámite?"],
+    datos: ["¿Qué datos necesito tener listos?", "¿Es obligatorio poner las especies?"],
+    autoridad: ["¿Cuál es la diferencia entre CAR, SDA y Corpoboyacá?", "¿Los requisitos son oficiales?"],
+    revision: ["¿Puedo editar mi información?", "¿Qué pasa si un dato está mal?"],
+    documento: ["¿Cómo se genera el documento técnico?", "¿Puedo descargar el documento?"],
+    anexos: ["¿Qué anexos necesito?", "¿Los anexos son obligatorios?"],
+    encuesta: ["¿Para qué sirve la encuesta?", "¿Cuánto tarda responderla?"],
+  };
+
+  const CONTEXT_INTRO = {
+    landing: "¡Hola! 👋 Soy el asistente de EcoRegión. Puedo contarte cómo funciona la plataforma antes de que empieces.",
+    datos: "Estás en el formulario del proyecto. Diligencia los datos del solicitante y del predio; los campos marcados son obligatorios.",
+    autoridad: "Ahora elige la autoridad ambiental competente para tu proyecto: CAR, SDA o Corpoboyacá. Esto ajusta los requisitos que verás más adelante.",
+    revision: "Revisa que toda la información esté correcta. Puedes volver atrás y editar cualquier sección antes de continuar.",
+    documento: "Estoy generando la vista de tu documento técnico con la información registrada.",
+    anexos: "Aquí tienes los anexos sugeridos según la autoridad ambiental seleccionada. Recuerda que son datos provisionales.",
+    encuesta: "¡Ya casi terminamos! Cuéntanos cómo fue tu experiencia con la plataforma.",
+  };
+
+  function scrollToBottom(){
+    elBody.scrollTop = elBody.scrollHeight;
+  }
+
+  function addMessage(text, from){
+    const div = document.createElement("div");
+    div.className = "msg " + from;
+    div.innerHTML = text;
+    elBody.appendChild(div);
+    scrollToBottom();
+  }
+
+  function renderSuggestions(){
+    const list = CONTEXT_SUGGESTIONS[currentContext] || CONTEXT_SUGGESTIONS.landing;
+    elSuggestions.innerHTML = "";
+    list.forEach(text => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip-suggest";
+      chip.textContent = text;
+      chip.addEventListener("click", () => handleUserMessage(text));
+      elSuggestions.appendChild(chip);
+    });
+  }
+
+  function respond(userText){
+    const match = RESPONSES.find(r => r.test.test(userText));
+    const answer = match ? match.answer : FALLBACK;
+    setTimeout(() => addMessage(answer, "bot"), 380);
+  }
+
+  function handleUserMessage(text){
+    if(!text || !text.trim()) return;
+    addMessage(text, "user");
+    respond(text);
+    elInput.value = "";
+  }
+
+  function open(){
+    opened = true;
+    elWindow.classList.add("open");
+    if(elBody.childElementCount === 0){
+      addMessage(CONTEXT_INTRO[currentContext] || CONTEXT_INTRO.landing, "bot");
+    }
+    renderSuggestions();
+    elInput.focus();
+  }
+
+  function close(){
+    opened = false;
+    elWindow.classList.remove("open");
+  }
+
+  function setContext(ctx){
+    currentContext = ctx || "landing";
+    if(opened) renderSuggestions();
+  }
+
+  function init(){
+    elFab = document.getElementById("chat-fab");
+    elWindow = document.getElementById("chat-window");
+    elBody = document.getElementById("chat-body");
+    elSuggestions = document.getElementById("chat-suggestions");
+    elForm = document.getElementById("chat-form");
+    elInput = document.getElementById("chat-input");
+    elClose = document.getElementById("chat-close");
+
+    elFab.addEventListener("click", () => opened ? close() : open());
+    elClose.addEventListener("click", close);
+    elForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      handleUserMessage(elInput.value);
+    });
+  }
+
+  return { init, setContext, open, close };
+})();
+
+document.addEventListener("DOMContentLoaded", EcoBot.init);
+
+</script>
+<script>
+/**
+ * EcoRegión · app.js
+ * -----------------------------------------------------------------------
+ * Controla la landing page y la plataforma (wizard) de aprovechamiento
+ * forestal. No depende de frameworks: todo el estado de la sesión vive
+ * en el navegador y cada registro se envía al endpoint configurado en
+ * ECOREGION_CONFIG (ver más abajo y el README).
+ * -----------------------------------------------------------------------
+ */
+
+const EcoApp = (() => {
+
+  // =======================================================================
+  // Configuración del registro de solicitantes
+  // -----------------------------------------------------------------------
+  // Cada persona o empresa que completa el paso "Autoridad ambiental" se
+  // envía a este endpoint, que debe apuntar a la Web App de Google Apps
+  // Script incluida en README.md. Esa Web App:
+  //   1) guarda el registro como una fila en una Hoja de cálculo de Google, y
+  //   2) cada 2 horas exporta esa hoja como archivo Excel (.xlsx) y lo envía
+  //      por correo a gabimen1232007@gmail.com.
+  // Mientras REGISTRO_ENDPOINT esté vacío, el envío se omite en silencio y
+  // el resto de la plataforma sigue funcionando con normalidad.
+  // Instrucciones completas de despliegue: ver README.md.
+  // =======================================================================
+  const ECOREGION_CONFIG = {
+    REGISTRO_ENDPOINT: "https://script.google.com/macros/s/AKfycbymKWnFxgxrSMFmQIUVv48qFZEgSuunJLg8TYdlLQzebd18sYVn1h5nhwUxtJQLQR2bVA/exec",
+  };
+
+  // Tamaño máximo permitido por archivo adjunto (8 MB), para mantener el
+  // envío liviano y confiable hacia el endpoint de registro.
+  const MAX_FILE_SIZE = 8 * 1024 * 1024;
+
+  const WIZARD_STEPS = [
+    { id: "datos",      label: "Datos" },
+    { id: "autoridad",  label: "Autoridad" },
+    { id: "revision",   label: "Revisión" },
+    { id: "documento",  label: "Documento" },
+    { id: "anexos",     label: "Anexos" },
+    { id: "encuesta",   label: "Encuesta" },
+  ];
+
+  const state = {
+    currentStep: "datos",
+    formSection: 0,
+    maxSectionReached: 0,
+    solicitante: {},
+    project: { especiesArr: [], documentosDeclarados: [] },
+    autoridad: null,
+    documentoGenerado: false,
+    documentoRadicado: "",
+    anexosGenerados: {},
+    documentosSubidos: {}, // { [docId]: File }
+    encuesta: { facilidad: null, nps: null, comentario: "" },
+  };
+
+  // ---- Referencias DOM (se completan en init) --------------------------
+  let landingShell, appShell, progressTrack, toastEl, navLinksMobile, navToggle;
+
+  // =======================================================================
+  // Utilidades
+  // =======================================================================
+  function qs(sel, ctx){ return (ctx || document).querySelector(sel); }
+  function qsa(sel, ctx){ return Array.from((ctx || document).querySelectorAll(sel)); }
+
+  function showToast(message, icon){
+    toastEl.innerHTML = `${icon || checkIconSVG()} <span>${message}</span>`;
+    toastEl.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toastEl.classList.remove("show"), 3200);
+  }
+
+  function checkIconSVG(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  }
+
+  function fillSelect(selectEl, options, placeholder){
+    selectEl.innerHTML = "";
+    if(placeholder){
+      const opt = document.createElement("option");
+      opt.value = ""; opt.textContent = placeholder; opt.disabled = true; opt.selected = true;
+      selectEl.appendChild(opt);
+    }
+    options.forEach(o => {
+      const opt = document.createElement("option");
+      if(typeof o === "string"){ opt.value = o; opt.textContent = o; }
+      else { opt.value = o.id; opt.textContent = o.label; }
+      selectEl.appendChild(opt);
+    });
+  }
+
+  // =======================================================================
+  // Landing: scroll suave, menú móvil, animaciones de entrada
+  // =======================================================================
+  function initLandingSteps(){
+    const wrap = qs("#landing-steps");
+    wrap.innerHTML = EcoRegionData.PASOS_TRAMITE.map((p, i) => `
+      <div class="step-chip reveal">
+        <svg class="ring" viewBox="0 0 24 24" fill="none" stroke="#50B50F" stroke-width="1.6">
+          <circle cx="12" cy="12" r="9" opacity=".3"/>
+          <path d="M12 3a9 9 0 0 1 9 9" stroke-linecap="round"/>
+        </svg>
+        <h4>${i + 1}. ${p.titulo}</h4>
+        <p>${p.descripcion}</p>
+      </div>
+    `).join("");
+  }
+
+  function setupScrollLinks(){
+    qsa("[data-scroll]").forEach(el => {
+      el.addEventListener("click", () => {
+        const target = el.getAttribute("data-scroll");
+        if(navLinksMobile) navLinksMobile.classList.remove("open");
+        if(target === "top"){
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+        const dest = document.getElementById(target);
+        if(dest) dest.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
+
+  function setupMobileMenu(){
+    navToggle.addEventListener("click", () => navLinksMobile.classList.toggle("open"));
+  }
+
+  function setupReveal(){
+    const targets = qsa(".reveal:not(.in)");
+    if(!("IntersectionObserver" in window)){
+      targets.forEach(t => t.classList.add("in"));
+      return;
+    }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add("in");
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+    targets.forEach(t => obs.observe(t));
+  }
+
+  // =======================================================================
+  // Transición Landing <-> Plataforma
+  // =======================================================================
+  function startWizard(){
+    landingShell.classList.add("hidden");
+    appShell.classList.add("active");
+    window.scrollTo(0, 0);
+    goToStep("datos");
+  }
+
+  function exitWizard(){
+    appShell.classList.remove("active");
+    landingShell.classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    EcoBot.setContext("landing");
+  }
+
+  function resetApp(){
+    state.solicitante = {};
+    state.project = { especiesArr: [], documentosDeclarados: [] };
+    state.autoridad = null;
+    state.documentoGenerado = false;
+    state.documentoRadicado = "";
+    state.anexosGenerados = {};
+    state.documentosSubidos = {};
+    state.formSection = 0;
+    state.maxSectionReached = 0;
+    state.encuesta = { facilidad: null, nps: null, comentario: "" };
+    qs("#form-datos").reset();
+    renderEspecieTags();
+    renderChecklistDoc();
+    qs("#tag-input-wrap").style.borderColor = "";
+    qs("#err-declaracion").style.display = "none";
+    qsa(".authority-card").forEach(c => c.classList.remove("selected"));
+    qs("#authority-requisitos").hidden = true;
+    qs("#btn-autoridad-next").disabled = true;
+    qs("#doc-preview").innerHTML = `
+      <div class="gen-loading" id="doc-loading">
+        <svg class="gen-spinner spin" viewBox="0 0 24 24" fill="none" stroke="#50B50F" stroke-width="1.6"><circle cx="12" cy="12" r="9" opacity=".25"/><path d="M21 12a9 9 0 0 0-9-9" stroke-linecap="round"/></svg>
+        <p>Generando documento técnico…</p>
+      </div>`;
+    qs("#btn-documento-next").disabled = true;
+    qsa(".scale-opt").forEach(o => o.classList.remove("selected"));
+    qsa(".nps-opt").forEach(o => o.classList.remove("selected"));
+    qs("#f-comentario").value = "";
+    goToStep("datos");
+    goToFormSection(0, { silent: true });
+  }
+
+  // =======================================================================
+  // Barra de progreso (anillos de crecimiento)
+  // =======================================================================
+  function renderProgress(activeId){
+    const activeIndex = WIZARD_STEPS.findIndex(s => s.id === activeId);
+    progressTrack.innerHTML = WIZARD_STEPS.map((s, i) => {
+      const cls = i < activeIndex ? "done" : (i === activeIndex ? "active" : "");
+      const ringInner = i < activeIndex ? checkIconSVG() : (i + 1);
+      const connector = i > 0 ? `<div class="progress-connector ${i <= activeIndex ? "done" : ""}"></div>` : "";
+      return `${connector}<div class="progress-step ${cls}">
+        <div class="ring">${ringInner}</div>
+        <div class="label">${s.label}</div>
+      </div>`;
+    }).join("");
+  }
+
+  // =======================================================================
+  // Navegación entre pasos del wizard
+  // =======================================================================
+  function goToStep(stepId){
+    qsa(".wizard-step").forEach(sec => {
+      sec.hidden = sec.getAttribute("data-step") !== stepId;
+    });
+
+    const isFinal = stepId === "fin";
+    qs(".progress-wrap").style.display = isFinal ? "none" : "";
+    if(!isFinal) renderProgress(stepId);
+
+    state.currentStep = stepId;
+    EcoBot.setContext(stepId);
+
+    if(stepId === "revision") renderReview();
+    if(stepId === "documento") runDocumentGeneration();
+    if(stepId === "anexos"){ renderAnexos(); renderDocumentosSubida(); }
+    if(stepId === "encuesta") renderSurveyNPS();
+
+    qs("main.wizard-body").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // =======================================================================
+  // Paso 1 — Solicitud de Aprovechamiento Forestal (5 secciones)
+  // =======================================================================
+  const FORM_SECTIONS = EcoRegionData.SECCIONES_FORMULARIO; // [{id,numero,titulo,subtitulo}, ...]
+  let formSectionEls = [];
+
+  function initDatosForm(){
+    fillSelect(qs("#f-tipoPersona"), EcoRegionData.TIPOS_PERSONA, "Selecciona una opción");
+    fillSelect(qs("#f-tipoDocumento"), EcoRegionData.TIPOS_DOCUMENTO, "Selecciona una opción");
+    fillSelect(qs("#f-tipoAprovechamiento"), EcoRegionData.TIPOS_APROVECHAMIENTO, "Selecciona una opción");
+    fillSelect(qs("#f-departamento"), EcoRegionData.DEPARTAMENTOS_DEMO, "Selecciona una opción");
+
+    formSectionEls = qsa(".form-section", qs("#form-datos"));
+    state.project.especiesArr = state.project.especiesArr || [];
+    state.project.documentosDeclarados = state.project.documentosDeclarados || [];
+
+    renderSectionStepper();
+    renderChecklistDoc();
+    setupTagInput();
+
+    qs("#btn-section-next").addEventListener("click", onSectionNextClick);
+    qs("#btn-section-prev").addEventListener("click", onSectionPrevClick);
+
+    goToFormSection(0, { silent: true });
+  }
+
+  function goToFormSection(index, opts){
+    opts = opts || {};
+    state.formSection = index;
+    formSectionEls.forEach((sec, i) => { sec.hidden = i !== index; });
+
+    renderRingProgress();
+    renderSectionStepper();
+
+    const nextBtn = qs("#btn-section-next");
+    const isLast = index === FORM_SECTIONS.length - 1;
+    nextBtn.innerHTML = isLast
+      ? 'Continuar a Autoridad ambiental <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+      : 'Siguiente sección <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+    qs("#btn-section-prev").disabled = index === 0;
+
+    if(!opts.silent) qs(".panel.form-forestal").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function onSectionNextClick(){
+    const idx = state.formSection;
+    if(!validateFormSection(idx)) return;
+    collectFormSection(idx);
+
+    if(idx < FORM_SECTIONS.length - 1){
+      state.maxSectionReached = Math.max(state.maxSectionReached || 0, idx + 1);
+      goToFormSection(idx + 1);
+    } else {
+      state.maxSectionReached = FORM_SECTIONS.length - 1;
+      goToStep("autoridad");
+    }
+  }
+
+  function onSectionPrevClick(){
+    if(state.formSection > 0) goToFormSection(state.formSection - 1);
+  }
+
+  // ---- Indicador de progreso: anillos concéntricos -----------------------
+  function renderRingProgress(){
+    const rings = qsa(".ring-progress .ring");
+    const completed = state.maxSectionReached || 0;
+    rings.forEach((ring, i) => {
+      // ring-1 es el anillo exterior → sección 0; se recorre de afuera hacia adentro
+      ring.classList.remove("done", "active");
+      if(i < completed) ring.classList.add("done");
+      else if(i === state.formSection) ring.classList.add("active");
+    });
+    qs("#ring-progress-count").textContent = completed;
+  }
+
+  // ---- Numeración de secciones 01–05 -------------------------------------
+  function renderSectionStepper(){
+    const wrap = qs("#section-stepper");
+    const completed = state.maxSectionReached || 0;
+    wrap.innerHTML = FORM_SECTIONS.map((s, i) => {
+      const cls = i < completed ? "done" : (i === state.formSection ? "active" : "");
+      const connector = i > 0 ? `<div class="section-stepper-connector"></div>` : "";
+      return `${connector}<div class="section-stepper-item ${cls}" data-goto-section="${i}">
+        <span class="num">${i < completed ? checkIconSVG() : s.numero}</span>
+        <span class="name">${s.titulo}</span>
+      </div>`;
+    }).join("");
+
+    qsa("[data-goto-section]", wrap).forEach(item => {
+      const idx = parseInt(item.getAttribute("data-goto-section"), 10);
+      if(idx < completed || idx === state.formSection){
+        item.addEventListener("click", () => goToFormSection(idx));
+      }
+    });
+  }
+
+  // ---- Validación por sección --------------------------------------------
+  function markFieldError(input, invalid){
+    const field = input.closest(".field");
+    if(field) field.classList.toggle("error", invalid);
+    return invalid;
+  }
+
+  function validateFormSection(idx){
+    const form = qs("#form-datos");
+    let valid = true;
+
+    function req(name, extraTest){
+      const input = form.elements[name];
+      if(!input) return;
+      const empty = !input.value || !input.value.toString().trim();
+      let invalid = empty;
+      if(!empty && extraTest) invalid = !extraTest(input.value);
+      if(markFieldError(input, invalid)) valid = false;
+    }
+
+    if(idx === 0){
+      req("tipoPersona");
+      req("nombreSolicitante");
+      req("tipoDocumento");
+      req("numeroDocumento", v => /^[0-9]{4,15}$/.test(v));
+      req("email", v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+      req("telefono", v => /^[0-9+()\s-]{7,}$/.test(v));
+    } else if(idx === 1){
+      req("departamento");
+      req("municipio");
+      req("area", v => !isNaN(parseFloat(v)) && parseFloat(v) > 0);
+    } else if(idx === 2){
+      req("nombreProyecto");
+      req("tipoAprovechamiento");
+      req("descripcion");
+      if(state.project.especiesArr.length === 0){
+        const wrap = qs("#tag-input-wrap");
+        wrap.style.borderColor = "var(--alerta)";
+        showToast("Agrega al menos una especie antes de continuar.", alertIconSVG());
+        valid = false;
+      } else {
+        qs("#tag-input-wrap").style.borderColor = "";
+      }
+    } else if(idx === 3){
+      req("fundamentoNormativo");
+      const checkbox = qs("#f-declaracionVeracidad");
+      const errEl = qs("#err-declaracion");
+      if(!checkbox.checked){
+        errEl.style.display = "block";
+        valid = false;
+      } else {
+        errEl.style.display = "none";
+      }
+    }
+    // idx === 4 (documentos anexos): checklist libre, sin validación obligatoria
+
+    if(!valid) showToast("Revisa los campos marcados en rojo antes de continuar.", alertIconSVG());
+    return valid;
+  }
+
+  function alertIconSVG(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>';
+  }
+
+  // ---- Recolección de datos por sección -----------------------------------
+  function collectFormSection(idx){
+    const form = qs("#form-datos");
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    if(idx === 0){
+      state.solicitante = {
+        tipoPersona: labelFor(EcoRegionData.TIPOS_PERSONA, data.tipoPersona),
+        nombreSolicitante: data.nombreSolicitante || "",
+        tipoDocumento: labelFor(EcoRegionData.TIPOS_DOCUMENTO, data.tipoDocumento),
+        numeroDocumento: data.numeroDocumento || "",
+        email: data.email || "",
+        telefono: data.telefono || "",
+      };
+    } else if(idx === 1){
+      state.project.departamento = data.departamento || "";
+      state.project.municipio = data.municipio || "";
+      state.project.veredaDireccion = data.veredaDireccion || "";
+      state.project.area = data.area || "";
+      state.project.coordenadas = data.coordenadas || "";
+    } else if(idx === 2){
+      state.project.nombreProyecto = data.nombreProyecto || "";
+      state.project.tipoAprovechamiento = labelFor(EcoRegionData.TIPOS_APROVECHAMIENTO, data.tipoAprovechamiento);
+      state.project.volumenEstimado = data.volumenEstimado || "";
+      state.project.especies = state.project.especiesArr.join(", ") || "No especificadas";
+      state.project.descripcion = data.descripcion || "Sin descripción adicional.";
+    } else if(idx === 3){
+      state.project.fundamentoNormativo = data.fundamentoNormativo || "";
+      state.project.declaracionVeracidad = qs("#f-declaracionVeracidad").checked;
+    } else if(idx === 4){
+      // Los documentos declarados ya se actualizan en vivo vía renderChecklistDoc()/toggle
+    }
+  }
+
+  function labelFor(list, id){
+    const found = list.find(o => o.id === id);
+    return found ? found.label : id;
+  }
+
+  // ---- Especies: campo de tags (escribir + Enter) -------------------------
+  function setupTagInput(){
+    const input = qs("#f-especie-tag");
+    input.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        addEspecieTag(input.value);
+        input.value = "";
+      }
+    });
+    renderEspecieTags();
+  }
+
+  function addEspecieTag(raw){
+    const value = raw.trim();
+    if(!value) return;
+    const exists = state.project.especiesArr.some(v => v.toLowerCase() === value.toLowerCase());
+    if(exists) return;
+    state.project.especiesArr.push(value);
+    renderEspecieTags();
+    qs("#tag-input-wrap").style.borderColor = "";
+  }
+
+  function removeEspecieTag(value){
+    state.project.especiesArr = state.project.especiesArr.filter(v => v !== value);
+    renderEspecieTags();
+  }
+
+  function renderEspecieTags(){
+    const wrap = qs("#especies-tags");
+    wrap.innerHTML = state.project.especiesArr.map(v => `
+      <span class="tag-chip">${v}<button type="button" data-remove-tag="${v}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button></span>
+    `).join("");
+    qsa("[data-remove-tag]", wrap).forEach(btn => {
+      btn.addEventListener("click", () => removeEspecieTag(btn.getAttribute("data-remove-tag")));
+    });
+  }
+
+  // ---- Documentos anexos: checklist estilizado -----------------------------
+  function renderChecklistDoc(){
+    const wrap = qs("#checklist-doc");
+    wrap.innerHTML = EcoRegionData.CHECKLIST_SOLICITUD_GENERAL.map(doc => {
+      const checked = state.project.documentosDeclarados.includes(doc.id);
+      return `
+      <div class="checklist-doc-item ${checked ? "checked" : ""}" data-doc-item="${doc.id}">
+        <input type="checkbox" id="chk-${doc.id}" ${checked ? "checked" : ""}>
+        <label for="chk-${doc.id}">${doc.label}</label>
+        <span class="check-status">${checkIconSVG()}</span>
+      </div>`;
+    }).join("");
+
+    qsa("[data-doc-item]", wrap).forEach(item => {
+      const id = item.getAttribute("data-doc-item");
+      const checkbox = qs("input", item);
+      checkbox.addEventListener("change", () => {
+        item.classList.toggle("checked", checkbox.checked);
+        if(checkbox.checked){
+          if(!state.project.documentosDeclarados.includes(id)) state.project.documentosDeclarados.push(id);
+        } else {
+          state.project.documentosDeclarados = state.project.documentosDeclarados.filter(d => d !== id);
+        }
+      });
+    });
+  }
+
+  // =======================================================================
+  // Paso 2 — Autoridad ambiental
+  // =======================================================================
+  function renderAuthorityCards(){
+    const grid = qs("#authority-grid");
+    grid.innerHTML = EcoRegionData.AUTORIDADES.map(a => `
+      <button type="button" class="authority-card" data-authority="${a.id}">
+        <div class="check">${checkIconSVG()}</div>
+        <div class="icon-badge dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
+        </div>
+        <h3>${a.nombre}</h3>
+        <p class="scope">${a.nombreCompleto}</p>
+        <p class="scope"><strong>Cobertura:</strong> ${a.cobertura}</p>
+      </button>
+    `).join("");
+
+    qsa(".authority-card", grid).forEach(card => {
+      card.addEventListener("click", () => selectAuthority(card.getAttribute("data-authority")));
+    });
+  }
+
+  function selectAuthority(id){
+    state.autoridad = id;
+    qsa(".authority-card").forEach(c => c.classList.toggle("selected", c.getAttribute("data-authority") === id));
+    renderRequisitos(id);
+    qs("#btn-autoridad-next").disabled = false;
+  }
+
+  function renderRequisitos(id){
+    const box = qs("#authority-requisitos");
+    const req = EcoRegionData.REQUISITOS_POR_AUTORIDAD[id];
+    box.hidden = false;
+    box.innerHTML = `
+      <div class="review-block-head">
+        <h3>Documentos que solicitará ${id}</h3>
+        <span class="badge-provisional">${alertIconSVG()} Provisional</span>
+      </div>
+      <ul class="req-list">
+        ${req.documentosSolicitud.map(d => `<li>${checkIconSVG()}<span>${d}</span></li>`).join("")}
+      </ul>
+      <p style="margin-top:16px; font-size:.82rem;">${req.notaOficial}</p>
+    `;
+  }
+
+  // ---- Registro del solicitante en la base de datos (Google Sheets/Excel) -
+  function buildRegistroPayload(){
+    const s = state.solicitante, p = state.project;
+    const authority = state.autoridad ? EcoRegionData.AUTORIDADES.find(a => a.id === state.autoridad) : null;
+    const docsDeclarados = (p.documentosDeclarados || [])
+      .map(id => (EcoRegionData.CHECKLIST_SOLICITUD_GENERAL.find(d => d.id === id) || {}).label)
+      .filter(Boolean)
+      .join("; ");
+
+    return {
+      fecha: new Date().toISOString(),
+      // 01 · Datos del solicitante
+      tipoPersona: s.tipoPersona || "",
+      nombreSolicitante: s.nombreSolicitante || "",
+      tipoDocumento: s.tipoDocumento || "",
+      numeroDocumento: s.numeroDocumento || "",
+      email: s.email || "",
+      telefono: s.telefono || "",
+      // 02 · Ubicación del predio
+      departamento: p.departamento || "",
+      municipio: p.municipio || "",
+      veredaDireccion: p.veredaDireccion || "",
+      coordenadas: p.coordenadas || "",
+      area: p.area || "",
+      // 03 · Objeto del aprovechamiento
+      nombreProyecto: p.nombreProyecto || "",
+      tipoAprovechamiento: p.tipoAprovechamiento || "",
+      volumenEstimado: p.volumenEstimado || "",
+      especies: p.especies || "",
+      descripcion: p.descripcion || "",
+      // 04 · Fundamento normativo
+      fundamentoNormativo: p.fundamentoNormativo || "",
+      declaracionVeracidad: !!p.declaracionVeracidad,
+      // 05 · Documentos anexos (checklist general declarado)
+      documentosDeclarados: docsDeclarados,
+      // Autoridad ambiental y documento técnico
+      autoridadAmbiental: authority ? authority.nombre : "",
+      radicado: state.documentoRadicado || "",
+    };
+  }
+
+  function enviarRegistro(payload){
+    const url = ECOREGION_CONFIG.REGISTRO_ENDPOINT;
+    if(!url) return; // Endpoint aún no configurado: ver README.md para activarlo.
+    try{
+      fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+      }).catch(() => { /* Falla silenciosa: no debe interrumpir al usuario */ });
+    }catch(err){ /* Falla silenciosa */ }
+  }
+
+  // Envía el registro completo (todos los campos del formulario + los
+  // documentos que el solicitante haya subido hasta el momento). Es
+  // asíncrona porque leer los archivos toma tiempo, pero no se espera su
+  // resultado antes de avanzar de pantalla: el envío ocurre en segundo plano.
+  async function registrarSolicitanteCompleto(){
+    const payload = buildRegistroPayload();
+    try{
+      payload.documentos = await construirDocumentosAdjuntos();
+    }catch(err){
+      payload.documentos = [];
+    }
+    enviarRegistro(payload);
+  }
+
+  // =======================================================================
+  // Paso 3 — Revisión y edición
+  // =======================================================================
+  function renderReview(){
+    const panel = qs("#review-panel");
+    const s = state.solicitante, p = state.project;
+    const authorityName = state.autoridad
+      ? EcoRegionData.AUTORIDADES.find(a => a.id === state.autoridad).nombre
+      : "No seleccionada";
+    const docsDeclarados = (p.documentosDeclarados || [])
+      .map(id => (EcoRegionData.CHECKLIST_SOLICITUD_GENERAL.find(d => d.id === id) || {}).label)
+      .filter(Boolean);
+
+    panel.innerHTML = `
+      <div class="review-block">
+        <div class="review-block-head">
+          <h3>01 · Datos del solicitante</h3>
+          <button class="btn btn-text btn-sm" data-edit-section="0">Editar</button>
+        </div>
+        <div class="review-grid">
+          ${reviewItem("Tipo de persona", s.tipoPersona)}
+          ${reviewItem("Nombre / razón social", s.nombreSolicitante)}
+          ${reviewItem("Documento", `${s.tipoDocumento || ""} ${s.numeroDocumento || ""}`.trim())}
+          ${reviewItem("Correo electrónico", s.email)}
+          ${reviewItem("Teléfono", s.telefono)}
+        </div>
+      </div>
+      <div class="review-block">
+        <div class="review-block-head">
+          <h3>02 · Ubicación del predio</h3>
+          <button class="btn btn-text btn-sm" data-edit-section="1">Editar</button>
+        </div>
+        <div class="review-grid">
+          ${reviewItem("Departamento", p.departamento)}
+          ${reviewItem("Municipio / localidad", p.municipio)}
+          ${reviewItem("Vereda / dirección", p.veredaDireccion)}
+          ${reviewItem("Área del predio", p.area ? p.area + " ha" : "")}
+          ${reviewItem("Coordenadas de referencia", p.coordenadas)}
+        </div>
+      </div>
+      <div class="review-block">
+        <div class="review-block-head">
+          <h3>03 · Objeto del aprovechamiento</h3>
+          <button class="btn btn-text btn-sm" data-edit-section="2">Editar</button>
+        </div>
+        <div class="review-grid">
+          ${reviewItem("Nombre del proyecto", p.nombreProyecto)}
+          ${reviewItem("Tipo de aprovechamiento", p.tipoAprovechamiento)}
+          ${reviewItem("Volumen estimado", p.volumenEstimado ? p.volumenEstimado + " m³" : "")}
+          ${reviewItem("Especies principales", p.especies)}
+        </div>
+        <div class="review-item" style="border-bottom:none; padding-top:14px;">
+          <dt>Descripción</dt><dd style="font-weight:400;">${p.descripcion && p.descripcion.trim() ? p.descripcion : "—"}</dd>
+        </div>
+      </div>
+      <div class="review-block">
+        <div class="review-block-head">
+          <h3>04 · Fundamento normativo</h3>
+          <button class="btn btn-text btn-sm" data-edit-section="3">Editar</button>
+        </div>
+        <div class="review-item" style="border-bottom:none;">
+          <dt>Normas citadas por el solicitante</dt>
+          <dd style="font-weight:400;">${p.fundamentoNormativo && p.fundamentoNormativo.trim() ? p.fundamentoNormativo : "—"}</dd>
+        </div>
+      </div>
+      <div class="review-block">
+        <div class="review-block-head">
+          <h3>05 · Documentos anexos declarados</h3>
+          <button class="btn btn-text btn-sm" data-edit-section="4">Editar</button>
+        </div>
+        ${docsDeclarados.length
+          ? `<ul class="req-list">${docsDeclarados.map(d => `<li>${checkIconSVG()}<span>${d}</span></li>`).join("")}</ul>`
+          : `<p style="margin:0;">Aún no marcaste ningún documento en el checklist.</p>`}
+      </div>
+      <div class="review-block">
+        <div class="review-block-head">
+          <h3>Autoridad ambiental</h3>
+          <button class="btn btn-text btn-sm" data-edit="autoridad">Editar</button>
+        </div>
+        <div class="review-grid">
+          ${reviewItem("Autoridad seleccionada", authorityName)}
+        </div>
+      </div>
+    `;
+
+    qsa("[data-edit-section]", panel).forEach(btn => {
+      btn.addEventListener("click", () => {
+        goToStep("datos");
+        goToFormSection(parseInt(btn.getAttribute("data-edit-section"), 10), { silent: true });
+      });
+    });
+    qsa("[data-edit]", panel).forEach(btn => {
+      btn.addEventListener("click", () => goToStep(btn.getAttribute("data-edit")));
+    });
+  }
+
+  function reviewItem(label, value){
+    return `<div class="review-item"><dt>${label}</dt><dd>${value && value.trim() ? value : "—"}</dd></div>`;
+  }
+
+  // =======================================================================
+  // Paso 4 — Generación automática del documento técnico
+  // =======================================================================
+  function runDocumentGeneration(){
+    const preview = qs("#doc-preview");
+    qs("#btn-documento-next").disabled = true;
+    state.documentoGenerado = false;
+
+    preview.innerHTML = `
+      <div class="gen-loading" id="doc-loading">
+        <svg class="gen-spinner spin" viewBox="0 0 24 24" fill="none" stroke="#50B50F" stroke-width="1.6"><circle cx="12" cy="12" r="9" opacity=".25"/><path d="M21 12a9 9 0 0 0-9-9" stroke-linecap="round"/></svg>
+        <p>Generando documento técnico…</p>
+      </div>`;
+
+    setTimeout(() => {
+      const { html, radicado } = buildDocumentHTML();
+      preview.innerHTML = html;
+      state.documentoGenerado = true;
+      state.documentoRadicado = radicado;
+      qs("#btn-documento-next").disabled = false;
+      showToast("Documento técnico generado.");
+
+      const regenBtn = qs("#btn-doc-regenerar");
+      if(regenBtn) regenBtn.addEventListener("click", runDocumentGeneration);
+
+      const downloadBtn = qs("#btn-doc-descargar");
+      if(downloadBtn) downloadBtn.addEventListener("click", () => {
+        descargarArchivo(`documento-tecnico-${radicado}.html`, buildDocumentDescargable(radicado), "text/html;charset=utf-8");
+        showToast("Descargando documento técnico…");
+      });
+    }, 1400);
+  }
+
+  // ---- Utilidad de descarga real de archivos (Blob) -----------------------
+  function descargarArchivo(nombre, contenido, mime){
+    const blob = new Blob([contenido], { type: mime || "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nombre;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function buildDocumentHTML(){
+    const s = state.solicitante, p = state.project;
+    const authority = state.autoridad ? EcoRegionData.AUTORIDADES.find(a => a.id === state.autoridad) : null;
+    const fecha = new Date().toLocaleDateString("es-CO", { year: "numeric", month: "long", day: "numeric" });
+    const radicado = "ECO-" + Math.floor(100000 + Math.random() * 900000);
+    const docsDeclarados = (p.documentosDeclarados || [])
+      .map(id => (EcoRegionData.CHECKLIST_SOLICITUD_GENERAL.find(d => d.id === id) || {}).label)
+      .filter(Boolean);
+
+    const html = `
+      <div class="doc-toolbar">
+        <span class="filename">documento-tecnico-${radicado}.html</span>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost btn-sm" id="btn-doc-regenerar">Regenerar</button>
+          <button class="btn btn-primary btn-sm" id="btn-doc-descargar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 21h14"/></svg>
+            Descargar documento
+          </button>
+        </div>
+      </div>
+      <div class="doc-page">
+        <div class="doc-title">Documento técnico de aprovechamiento forestal</div>
+        <div class="doc-sub">Radicado ${radicado} · Generado el ${fecha} · EcoRegión (ECO REGIÓN SAS BIC)</div>
+
+        <h4>1. Identificación del solicitante</h4>
+        <table>
+          <tr><th>Nombre / razón social</th><td>${s.nombreSolicitante || "—"}</td></tr>
+          <tr><th>Tipo de persona</th><td>${s.tipoPersona || "—"}</td></tr>
+          <tr><th>Documento</th><td>${s.tipoDocumento || ""} ${s.numeroDocumento || "—"}</td></tr>
+          <tr><th>Contacto</th><td>${s.email || "—"} · ${s.telefono || "—"}</td></tr>
+        </table>
+
+        <h4>2. Ubicación del predio</h4>
+        <table>
+          <tr><th>Departamento / municipio</th><td>${p.municipio || "—"}, ${p.departamento || "—"}</td></tr>
+          <tr><th>Vereda / dirección</th><td>${p.veredaDireccion || "—"}</td></tr>
+          <tr><th>Área del predio</th><td>${p.area ? p.area + " ha" : "—"}</td></tr>
+          <tr><th>Coordenadas de referencia</th><td>${p.coordenadas || "—"}</td></tr>
+        </table>
+
+        <h4>3. Objeto del aprovechamiento</h4>
+        <table>
+          <tr><th>Nombre del proyecto</th><td>${p.nombreProyecto || "—"}</td></tr>
+          <tr><th>Tipo de aprovechamiento</th><td>${p.tipoAprovechamiento || "—"}</td></tr>
+          <tr><th>Volumen estimado</th><td>${p.volumenEstimado ? p.volumenEstimado + " m³" : "—"}</td></tr>
+          <tr><th>Especies principales</th><td>${p.especies || "—"}</td></tr>
+        </table>
+        <p style="margin:0 0 14px;">${p.descripcion || "Sin descripción adicional."}</p>
+
+        <h4>4. Fundamento normativo citado por el solicitante</h4>
+        <p style="margin:0 0 4px;">${p.fundamentoNormativo && p.fundamentoNormativo.trim() ? p.fundamentoNormativo : "No se registró fundamento normativo."}</p>
+        <p style="margin:0 0 14px; font-size:.78rem; color:#8a8a8a;">* Fundamento declarado por el solicitante. EcoRegión no valida ni completa este campo.</p>
+
+        <h4>5. Autoridad ambiental competente</h4>
+        <p style="margin:0 0 4px;">${authority ? authority.nombreCompleto + " (" + authority.id + ")" : "No seleccionada"}</p>
+        <p style="margin:0 0 14px; font-size:.78rem; color:#8a8a8a;">* Este documento se genera automáticamente a partir de la información registrada. La estructura y los textos no constituyen un documento técnico oficial ni reemplazan la normativa vigente de la autoridad ambiental.</p>
+
+        <h4>6. Documentos anexos declarados por el solicitante</h4>
+        ${docsDeclarados.length
+          ? `<table>${docsDeclarados.map(d => `<tr><td>${d}</td></tr>`).join("")}</table>`
+          : `<p>No se marcó ningún documento en el checklist de la solicitud.</p>`}
+        <p>Ver listado completo de anexos técnicos por generar en el siguiente paso.</p>
+      </div>
+    `;
+    return { html, radicado };
+  }
+
+  function buildDocumentDescargable(radicado){
+    const docBody = qs(".doc-page").innerHTML;
+    return `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<title>Documento técnico ${radicado} · EcoRegión</title>
+<style>
+  body{ font-family: 'IBM Plex Mono', Consolas, monospace; max-width: 780px; margin: 40px auto; padding: 0 24px; color:#1D2B1E; line-height:1.7; }
+  h1{ font-family: Georgia, serif; color:#2E4630; font-size:1.5rem; margin-bottom:4px; }
+  h4{ font-family: system-ui, sans-serif; color:#2E4630; text-transform:uppercase; letter-spacing:.04em; font-size:.95rem; margin:24px 0 8px; }
+  table{ width:100%; border-collapse:collapse; margin:8px 0 16px; font-size:.9rem; }
+  td, th{ border:1px solid #E1E9DE; padding:8px 10px; text-align:left; }
+  th{ background:#F5F9F2; }
+  .doc-sub{ color:#4C5B4D; font-size:.85rem; margin-bottom:20px; }
+</style></head>
+<body>
+<h1>Documento técnico de aprovechamiento forestal</h1>
+${docBody}
+</body></html>`;
+  }
+
+  // =======================================================================
+  // Paso 5 — Anexos
+  // =======================================================================
+  function renderAnexos(){
+    const grid = qs("#anexos-grid");
+    if(!state.autoridad){
+      grid.innerHTML = `<p>Selecciona primero una autoridad ambiental en el paso 2.</p>`;
+      return;
+    }
+    const req = EcoRegionData.REQUISITOS_POR_AUTORIDAD[state.autoridad];
+    grid.innerHTML = req.anexosTecnicos.map(a => {
+      const generado = !!state.anexosGenerados[a.id];
+      return `
+      <div class="anexo-card" data-anexo="${a.id}">
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        </div>
+        <div style="flex:1;">
+          <h4>${a.nombre} <span class="filetag">${a.tipo}</span></h4>
+          <div class="status ${generado ? "ok" : "pending"}">
+            ${generado ? checkIconSVG() + " Generado" : "Pendiente de generar"}
+          </div>
+          <div class="actions" style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn ${generado ? "btn-ghost" : "btn-primary"} btn-sm" data-generar="${a.id}">
+              ${generado ? "Regenerar" : "Generar anexo"}
+            </button>
+            ${generado ? `<button class="btn btn-ghost btn-sm" data-descargar="${a.id}">Descargar</button>` : ""}
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+
+    qsa("[data-generar]", grid).forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-generar");
+        state.anexosGenerados[id] = true;
+        renderAnexos();
+        showToast("Anexo generado.");
+      });
+    });
+
+    qsa("[data-descargar]", grid).forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-descargar");
+        const anexo = req.anexosTecnicos.find(a => a.id === id);
+        descargarArchivo(`${id}.txt`, buildAnexoDescargable(anexo), "text/plain;charset=utf-8");
+        showToast("Descargando anexo…");
+      });
+    });
+  }
+
+  function buildAnexoDescargable(anexo){
+    const s = state.solicitante, p = state.project;
+    const authority = state.autoridad ? EcoRegionData.AUTORIDADES.find(a => a.id === state.autoridad) : null;
+    const fecha = new Date().toLocaleDateString("es-CO", { year: "numeric", month: "long", day: "numeric" });
+    return [
+      `EcoRegión — ${anexo.nombre}`,
+      `Formato de referencia: ${anexo.tipo}`,
+      `Generado el: ${fecha}`,
+      `Proyecto: ${p.nombreProyecto || "—"}`,
+      `Solicitante: ${s.nombreSolicitante || "—"}`,
+      `Autoridad ambiental: ${authority ? authority.nombreCompleto : "—"}`,
+      "",
+      "Este archivo es un borrador de referencia generado automáticamente por EcoRegión",
+      "a partir de la información registrada. No constituye el anexo técnico oficial ni",
+      "reemplaza la elaboración profesional requerida por la autoridad ambiental.",
+    ].join("\n");
+  }
+
+  // ---- Subida real de documentos requeridos por autoridad ------------------
+  function obtenerDocumentosParaSubir(){
+    if(!state.autoridad) return [];
+    return EcoRegionData.REQUISITOS_POR_AUTORIDAD[state.autoridad].documentosParaSubir || [];
+  }
+
+  function formatearTamano(bytes){
+    if(bytes < 1024) return bytes + " B";
+    if(bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  }
+
+  function renderDocumentosSubida(){
+    const grid = qs("#uploads-grid");
+    const docs = obtenerDocumentosParaSubir();
+    if(!state.autoridad || !docs.length){
+      grid.innerHTML = `<p>Selecciona primero una autoridad ambiental en el paso 2.</p>`;
+      return;
+    }
+
+    grid.innerHTML = docs.map(d => {
+      const file = state.documentosSubidos[d.id];
+      return `
+      <div class="upload-card ${file ? "has-file" : ""}" data-doc-card="${d.id}">
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+        </div>
+        <div style="flex:1; min-width:0;">
+          <h4>${d.label}</h4>
+          <div class="upload-slot">
+            <input type="file" id="upload-${d.id}" class="upload-input" data-doc-id="${d.id}" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx">
+            <label for="upload-${d.id}" class="btn btn-ghost btn-sm">${file ? "Cambiar archivo" : "Seleccionar archivo"}</label>
+            <span class="upload-filename" title="${file ? file.name : ""}">${file ? `${file.name} · ${formatearTamano(file.size)}` : "Ningún archivo seleccionado"}</span>
+            ${file ? `<button type="button" class="btn-text btn-sm" data-remove-doc="${d.id}">Quitar</button>` : ""}
+          </div>
+          <div class="status ${file ? "ok" : "pending"}">
+            ${file ? checkIconSVG() + " Archivo cargado" : "Pendiente de subir"}
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+
+    qsa(".upload-input", grid).forEach(input => {
+      input.addEventListener("change", () => {
+        const id = input.getAttribute("data-doc-id");
+        const file = input.files && input.files[0];
+        if(!file) return;
+        if(file.size > MAX_FILE_SIZE){
+          showToast(`"${file.name}" pesa más de 8 MB. Sube un archivo más liviano.`, alertIconSVG());
+          input.value = "";
+          return;
+        }
+        state.documentosSubidos[id] = file;
+        renderDocumentosSubida();
+        showToast("Archivo cargado.");
+      });
+    });
+
+    qsa("[data-remove-doc]", grid).forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-remove-doc");
+        delete state.documentosSubidos[id];
+        renderDocumentosSubida();
+      });
+    });
+  }
+
+  function fileABase64(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function construirDocumentosAdjuntos(){
+    const docs = obtenerDocumentosParaSubir();
+    const resultados = [];
+    for(const [id, file] of Object.entries(state.documentosSubidos)){
+      try{
+        const base64 = await fileABase64(file);
+        const meta = docs.find(d => d.id === id);
+        resultados.push({
+          nombre: meta ? meta.label : id,
+          archivoNombre: file.name,
+          tipoMime: file.type || "application/octet-stream",
+          base64,
+        });
+      }catch(err){ /* Se omite el archivo que no se pudo leer; no interrumpe el envío */ }
+    }
+    return resultados;
+  }
+
+  // =======================================================================
+  // Paso 6 — Encuesta
+  // =======================================================================
+  function renderSurveyNPS(){
+    const row = qs("#survey-nps");
+    if(row.childElementCount) return;
+    for(let i = 0; i <= 10; i++){
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "nps-opt";
+      btn.textContent = i;
+      btn.addEventListener("click", () => {
+        qsa(".nps-opt", row).forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        state.encuesta.nps = i;
+      });
+      row.appendChild(btn);
+    }
+  }
+
+  function setupSurveyScale(){
+    qsa(".scale-opt", qs("#survey-facilidad")).forEach(opt => {
+      opt.addEventListener("click", () => {
+        qsa(".scale-opt", qs("#survey-facilidad")).forEach(o => o.classList.remove("selected"));
+        opt.classList.add("selected");
+        state.encuesta.facilidad = opt.getAttribute("data-value");
+      });
+    });
+  }
+
+  function submitSurvey(){
+    state.encuesta.comentario = qs("#f-comentario").value;
+    showToast("¡Gracias por tu respuesta!");
+    goToStep("fin");
+  }
+
+  // =======================================================================
+  // Conexión de botones de navegación del wizard
+  // =======================================================================
+  function setupWizardNav(){
+    qsa("[data-next]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const step = btn.getAttribute("data-next");
+        if(step === "autoridad"){
+          goToStep("revision");
+        } else if(step === "revision"){
+          goToStep("documento");
+        } else if(step === "documento"){
+          goToStep("anexos");
+        } else if(step === "anexos"){
+          registrarSolicitanteCompleto(); // envío en segundo plano, no bloquea la navegación
+          goToStep("encuesta");
+        }
+      });
+    });
+
+    qsa("[data-prev]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const from = btn.getAttribute("data-prev");
+        const order = WIZARD_STEPS.map(s => s.id);
+        const idx = order.indexOf(from);
+        if(idx > 0) goToStep(order[idx - 1]);
+      });
+    });
+
+    qs("#btn-survey-submit").addEventListener("click", submitSurvey);
+    qs("#btn-restart").addEventListener("click", resetApp);
+    qs("#btn-back-landing").addEventListener("click", exitWizard);
+  }
+
+  // =======================================================================
+  // Inicialización general
+  // =======================================================================
+  function init(){
+    landingShell = qs("#landing-shell");
+    appShell = qs("#app-shell");
+    progressTrack = qs("#progress-track");
+    toastEl = qs("#toast");
+    navLinksMobile = qs("#nav-links-mobile");
+    navToggle = qs("#nav-toggle");
+
+    initLandingSteps();
+    setupScrollLinks();
+    setupMobileMenu();
+    setupReveal();
+
+    initDatosForm();
+    renderAuthorityCards();
+    setupSurveyScale();
+    setupWizardNav();
+
+    qs("#btn-hero-start").addEventListener("click", startWizard);
+    qs("#btn-nav-start").addEventListener("click", startWizard);
+    qs("#btn-cta-start").addEventListener("click", startWizard);
+    qs("#btn-exit-app").addEventListener("click", exitWizard);
+    qs("#btn-app-brand").addEventListener("click", exitWizard);
+
+    renderProgress("datos");
+  }
+
+  return { init };
+})();
+
+document.addEventListener("DOMContentLoaded", EcoApp.init);
+
+</script>
+</body>
+</html>
